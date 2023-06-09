@@ -1,0 +1,83 @@
+Client Management Service:
+    Container:
+        ClientSvc:
+            REST:
+                /client
+                /client[POST]
+                ./client.py
+            Event Producer:
+                ./client_producer.py
+                event:
+                    client.new,
+                    client.changed
+            Image:
+                python + flask + pika + mysqlconnector (python_cfpm)
+        ClientCons:
+            Event Consumer:
+                ./client_consumer.py
+            Image:
+                python + pika + mysqlconnector (python_cpm)
+    Database:
+        client:
+            id,
+            email,
+            nama,
+            contact_person,
+            password
+
+Staff Management Service:
+    Container:
+        StaffSvc:
+            REST:
+                /staff
+                /staff[POST]
+                ./staff.py
+            Event Producer:
+                ./staff_producer.py
+                event:
+                    staff.new,
+                    staff.changed
+            Image:
+                python + flask + pika + mysqlconnector (python_sfpm)
+        ClientCons:
+            Event Consumer:
+                ./staff_consumer.py
+            Image:
+                python + pika + mysqlconnector (python_spm)
+    Database:
+        staff:
+            id,
+            email,
+            nama,
+            password
+
+Login Service:
+    Database:
+        login:
+            email,
+            password,
+            role
+
+Order Service:
+    Database:
+        order_client:
+            id
+        order:
+            id,
+            nama_order,
+            tanggal,
+            deskripsi,
+            id_client
+
+Event Service:
+    Database:
+        event_staff:
+            id
+        event_order:
+            id
+        event:
+            id,
+            nama_event,
+            jam,
+            id_staff,
+            id_order
