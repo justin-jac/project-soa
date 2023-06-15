@@ -1,0 +1,8 @@
+docker network create CLientNet
+
+docker network create PetraNet
+
+docker network create StaffNet
+
+docker run -d --hostname my-rabbit --name PetraMQ -p 8080:15672 -p 5672:5672 -e RABBITMQ_DEFAULT_USER=radmin -e RABBITMQ_DEFAULT_PASS=rpass --network PetraNet rabbitmq:3.11.15-management
+

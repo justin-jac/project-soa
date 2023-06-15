@@ -30,7 +30,7 @@ def client():
         print(auth)
 
         # ambil data kantin
-        sql = "SELECT * FROM client"
+        sql = "SELECT * FROM clients"
         dbc.execute(sql)
         data_client = dbc.fetchall()
 
@@ -62,7 +62,7 @@ def client():
 
         try:
             # simpan nama kantin, dan gedung ke database
-            sql = "INSERT INTO client (email, nama, contact_person, password) VALUES (%s,%s,%s,%s)"
+            sql = "INSERT INTO clients (email, nama, contact_person, password) VALUES (%s,%s,%s,%s)"
             dbc.execute(sql, [clientEmail, clientName, contact, clientPass] )
             db.commit()
             # dapatkan ID dari data kantin yang baru dimasukkan
@@ -120,12 +120,12 @@ def client2(id):
     if HTTPRequest.method == 'GET':
         if id.isnumeric():
             # ambil data client
-            sql = "SELECT * FROM client WHERE id = %s"
+            sql = "SELECT * FROM clients WHERE id = %s"
             dbc.execute(sql, [id])
             data_client = dbc.fetchone()
             # kalau data client ada, juga ambil menu dari client tsb.
             if data_client != None:
-                sql = "SELECT * FROM client WHERE idresto = %s"
+                sql = "SELECT * FROM clients WHERE idresto = %s"
                 dbc.execute(sql, [id])
                 data_menu = dbc.fetchall()
                 data_client['produk'] = data_menu
@@ -149,7 +149,7 @@ def client2(id):
 
         try:
             # simpan nama kantin, dan gedung ke database
-            sql = "INSERT INTO client (id, email, nama, contact_person, password) VALUES (%s,%s,%s,%s,%s)"
+            sql = "INSERT INTO clients (id, email, nama, contact_person, password) VALUES (%s,%s,%s,%s,%s)"
             dbc.execute(sql, [id,clientEmail,clientName,contact,clientPass] )
             db.commit()
             # dapatkan ID dari data client yang baru dimasukkan
