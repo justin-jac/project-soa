@@ -125,10 +125,10 @@ def client2(id):
             data_client = dbc.fetchone()
             # kalau data client ada, juga ambil menu dari client tsb.
             if data_client != None:
-                sql = "SELECT * FROM clients WHERE idresto = %s"
-                dbc.execute(sql, [id])
-                data_menu = dbc.fetchall()
-                data_client['produk'] = data_menu
+                # sql = "SELECT * FROM clients WHERE idresto = %s"
+                # dbc.execute(sql, [id])
+                # data_menu = dbc.fetchall()
+                # data_client['produk'] = data_menu
                 jsondoc = json.dumps(data_client)
 
                 status_code = 200  # The request has succeeded

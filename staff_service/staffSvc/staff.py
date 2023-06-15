@@ -1,8 +1,8 @@
 from flask import Flask, render_template, Response as HTTPResponse, request as HTTPRequest
 import mysql.connector, json, pika, logging
-from client_producer import *
+from staff_producer import *
 
-db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="staf")
+db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
 dbc = db.cursor(dictionary=True)
 
 
@@ -17,7 +17,7 @@ app = Flask(__name__)
 #  429 = Too Many Requests
 
 
-@app.route('/staf', methods = ['POST', 'GET'])
+@app.route('/client', methods = ['POST', 'GET'])
 def client():
     jsondoc = ''
 
@@ -30,21 +30,21 @@ def client():
         print(auth)
 
         # ambil data kantin
-        sql = "SELECT * FROM client"
+        sql = "SELECT * FROM stafs"
         dbc.execute(sql)
-        data_client = dbc.fetchall()
+        data_staff = dbc.fetchall()
 
-        if data_client != None:
+        if data_staff != None:
         #     # kalau data client ada, juga ambil menu dari client tsb.
-        #     for x in range(len(data_client)):
-        #         client_id = data_client[x]['id']
-        #         sql = "SELECT * FROM client_menu WHERE idresto = %s"
-        #         dbc.execute(sql, [client_id])
+        #     for x in range(len(data_staff)):
+        #         staff_id = data_staff[x]['id']
+        #         sql = "SELECT * FROM client_menu WHERE id = %s"
+        #         dbc.execute(sql, [staff_id])
         #         data_menu = dbc.fetchall()
-        #         data_client[x]['produk'] = data_menu
+        #         data_staff[x]['produk'] = data_menu
 
             status_code = 200  # The request has succeeded
-            jsondoc = json.dumps(data_client)
+            jsondoc = json.dumps(data_staff)
 
         else: 
             status_code = 404  # No resources found
@@ -55,27 +55,26 @@ def client():
     # ------------------------------------------------------
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
-        clientEmail = data['email']
-        clientName = data['nama']
-        contact = data['contact_person']
-        clientPass = data['password']
+        staffEmail = data['email']
+        staffName = data['nama']
+        staffPass = data['password']
 
         try:
             # simpan nama kantin, dan gedung ke database
-            sql = "INSERT INTO client (email, nama, contact_person, password) VALUES (%s,%s,%s,%s)"
-            dbc.execute(sql, [clientEmail, clientName, contact, clientPass] )
+            sql = "INSERT INTO stafs (email, nama, password) VALUES (%s,%s,%s,%s)"
+            dbc.execute(sql, [staffEmail, staffName, staffPass] )
             db.commit()
             # dapatkan ID dari data kantin yang baru dimasukkan
-            clientID = dbc.lastrowid
-            data_client = {'id':clientID}
-            jsondoc = json.dumps(data_client)
+            staffID = dbc.lastrowid
+            data_staff = {'id':staffID}
+            jsondoc = json.dumps(data_staff)
 
             # # simpan menu-menu untuk client di atas ke database
             # for i in range(len(data['produk'])):
             #     menu = data['produk'][i]['menu']
             #     price = data['produk'][i]['price']
 
-            #     sql = "INSERT INTO kantin_menu (idresto,menu,price) VALUES (%s,%s,%s)"
+            #     sql = "INSERT INTO kantin_menu (id,menu,price) VALUES (%s,%s,%s)"
             #     dbc.execute(sql, [kantinID,menu,price] )
             #     db.commit()
 
@@ -84,10 +83,10 @@ def client():
             # Data json yang dikirim sebagai message ke RabbitMQ adalah json asli yang
             # diterima oleh route /kantin [POST] di atas dengan tambahan 2 key baru,
             # yaitu 'event' dan kantinID.
-            data['event']  = 'new_client'
-            data['client_id'] = clientID
+            data['event']  = 'new_staff'
+            data['staff_id'] = staffID
             message = json.dumps(data)
-            publish_message(message,'client.new')
+            publish_message(message,'staff.new')
 
 
             status_code = 201
@@ -120,16 +119,16 @@ def client2(id):
     if HTTPRequest.method == 'GET':
         if id.isnumeric():
             # ambil data client
-            sql = "SELECT * FROM client WHERE id = %s"
+            sql = "SELECT * FROM stafs WHERE id = %s"
             dbc.execute(sql, [id])
-            data_client = dbc.fetchone()
+            data_staff = dbc.fetchone()
             # kalau data client ada, juga ambil menu dari client tsb.
-            if data_client != None:
-                sql = "SELECT * FROM client WHERE idresto = %s"
-                dbc.execute(sql, [id])
-                data_menu = dbc.fetchall()
-                data_client['produk'] = data_menu
-                jsondoc = json.dumps(data_client)
+            if data_staff != None:
+                # sql = "SELECT * FROM stafs WHERE id = %s"
+                # dbc.execute(sql, [id])
+                # data_menu = dbc.fetchall()
+                # data_staff['produk'] = data_menu
+                jsondoc = json.dumps(data_staff)
 
                 status_code = 200  # The request has succeeded
             else: 
@@ -142,20 +141,19 @@ def client2(id):
     # ------------------------------------------------------
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
-        clientEmail = data['email']
-        clientName = data['nama']
-        contact = data['contact_person']
-        clientPass = data['password']
+        staffEmail = data['email']
+        staffName = data['nama']
+        staffPass = data['password']
 
         try:
             # simpan nama kantin, dan gedung ke database
-            sql = "INSERT INTO client (id, email, nama, contact_person, password) VALUES (%s,%s,%s,%s,%s)"
-            dbc.execute(sql, [id,clientEmail,clientName,contact,clientPass] )
+            sql = "INSERT INTO stafs (id, email, nama, password) VALUES (%s,%s,%s,%s,%s)"
+            dbc.execute(sql, [id,staffEmail,staffName,staffPass] )
             db.commit()
             # dapatkan ID dari data client yang baru dimasukkan
-            clientID = dbc.lastrowid
-            data_client = {'id':clientID}
-            jsondoc = json.dumps(data_client)
+            staffID = dbc.lastrowid
+            data_staff = {'id':staffID}
+            jsondoc = json.dumps(data_staff)
 
             # TODO: Kirim message ke order_service melalui RabbitMQ tentang adanya data client baru
 
@@ -172,18 +170,17 @@ def client2(id):
     elif HTTPRequest.method == 'PUT':
         data = json.loads(HTTPRequest.data)
          
-        clientEmail = data['email']
-        clientName = data['nama']
-        contact = data['contact_person']
-        clientPass = data['password']
+        staffEmail = data['email']
+        staffName = data['nama']
+        staffPass = data['password']
 
-        messagelog = 'PUT id: ' + str(id) + ' | nama: ' + clientName + ' | email: ' + clientEmail
+        messagelog = 'PUT id: ' + str(id) + ' | nama: ' + staffName + ' | email: ' + staffEmail
         logging.warning("Received: %r" % messagelog)
 
         try:
             # ubah nama kantin dan gedung di database
-            sql = "UPDATE client set email=%s, nama=%s, contact_person=%s, password=%s where id=%s"
-            dbc.execute(sql, [clientEmail, clientName, contact, clientPass,id] )
+            sql = "UPDATE client set email=%s, nama=%s, password=%s where id=%s"
+            dbc.execute(sql, [staffEmail, staffName, staffPass,id] )
             db.commit()
 
             # teruskan json yang berisi perubahan data client yang diterima dari Web UI
@@ -191,10 +188,9 @@ def client2(id):
             data_baru = {}
             data_baru['event']  = "updated_tenant"
             data_baru['id']     = id
-            data_baru['email']   = clientEmail
-            data_baru['nama']   = clientName
-            data_baru['contact_person'] = contact
-            data_baru['password'] = clientPass
+            data_baru['email']   = staffEmail
+            data_baru['nama']   = staffName
+            data_baru['password'] = staffPass
             jsondoc = json.dumps(data_baru)
             publish_message(jsondoc,'client.changed')
 
