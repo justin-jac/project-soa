@@ -20,7 +20,38 @@ def main():
             dbc.execute(sql, [delete_id_order])
             db.commit()
 
-            message = "Succesfully deleted event with id_order "+str(delete_id_order)
+            message = "Succesfully deleted event with id_order " + str(delete_id_order)
+        
+        if event == "order.new":
+            id_order = data["id_order"]
+            
+            # INSERT order
+            sql = "INSERT INTO `event_order`(`id`) VALUES ('%s')"
+            dbc.execute(sql, [id_order])
+            db.commit()
+            
+            message = 'Added order' + str(id_order) + ' to event DB'
+            
+        if event == "staff.new":
+            id_staff = data["id_staff"]
+            
+            # INSERT staff
+            sql = "INSERT INTO `event_staff`(`id`) VALUES ('%s')"
+            dbc.execute(sql, [id_staff])
+            db.commit()
+            
+            message = 'Added staff' + str(id_order) + ' to event DB'
+            
+        if event == "staff.delete":
+            id_staff = data["id_staff"]
+            
+            # DELETE staff
+            sql = "DELETE FROM events WHERE id_order=%s"
+            dbc.execute(sql, [id_staff])
+            db.commit()
+            
+            message = 'Deleted staff' + str(id_order) + ' in event DB'
+        
 
         logging.warning("Received: %r" % message)
 
