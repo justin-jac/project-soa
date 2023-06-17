@@ -1,0 +1,35 @@
+services:
+  OrderSQL:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./OrderSQL/:/docker-entrypoint-initdb.d
+    networks:
+      - OrderNet
+  OrderSvc:
+    build: ./OrderSvc/
+    image: order_svc
+    ports:
+      - 5500:5500
+    networks:
+      - EoNet
+      - OrderNet
+    depends_on: 
+      OrderSQL:
+        condition: service_started
+  OrderCons:
+    build: ./OrderCons/
+    image: order_cons
+    networks:
+      - EoNet
+      - OrderNet
+    depends_on: 
+      OrderSQL:
+        condition: service_started
+
+networks:
+  EoNet:
+  OrderNet:

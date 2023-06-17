@@ -3,7 +3,7 @@ import mysql.connector
 import json
 from flask_cors import CORS
 
-db = mysql.connector.connect(host="localhost", user="root", password="",database="loginservice")
+db = mysql.connector.connect(host="localhost", user="root", password="root",database="loginservice")
 cursor = db.cursor(dictionary=True)
 
 app = Flask(__name__)
