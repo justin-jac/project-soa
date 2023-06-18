@@ -33,16 +33,16 @@ def main():
 
 
     credentials = pika.PlainCredentials('radmin', 'rpass')
-    connection = pika.BlockingConnection(pika.ConnectionParameters('EoMQ',5672,'/',credentials))
+    connection = pika.BlockingConnection(pika.ConnectionParameters('OrganizerMQ',5672,'/',credentials))
     channel = connection.channel()
 
-    channel.exchange_declare(exchange='eoExchange', exchange_type='topic')
+    channel.exchange_declare(exchange='OrganizerEX', exchange_type='topic')
     new_queue = channel.queue_declare(queue='', exclusive=True)
     new_queue_name = new_queue.method.queue
-    channel.queue_bind(exchange='eoExchange', queue=new_queue_name, routing_key='client.new')
-    channel.queue_bind(exchange='eoExchange', queue=new_queue_name, routing_key='client.update')
-    channel.queue_bind(exchange='eoExchange', queue=new_queue_name, routing_key='staff.new')
-    channel.queue_bind(exchange='eoExchange', queue=new_queue_name, routing_key='staff.update')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='client.new')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='client.update')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.new')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.update')
 
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=new_queue_name, on_message_callback=get_message)
