@@ -3,17 +3,15 @@ import mysql.connector
 import json
 from flask_cors import CORS
 
-db = mysql.connector.connect(host="localhost", user="root", password="root",database="loginservice")
+db = mysql.connector.connect(host="LoginSQL", user="root", password="root",database="loginservice")
 cursor = db.cursor(dictionary=True)
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/eo/login', methods = ['POST', 'GET'])
+@app.route('/organizer/login', methods = ['POST', 'GET'])
 def login():
     db = mysql.connector.connect(host="LoginSQL", user="root", password="root",database="loginservice")
-    cursor = db.cursor(dictionary=True)
-    db = mysql.connector.connect(host="localhost", user="root", password="root",database="loginservice")
     cursor = db.cursor(dictionary=True)
     jsonData = ''
     statusCode = 400
