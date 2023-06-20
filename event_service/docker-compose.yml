@@ -6,7 +6,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - /mnt/d/Coding Area/Semester 6/pythonProject/project-soa/event_service/EventSQL:/docker-entrypoint-initdb.d
+      - /mnt/d/Coding Area/Semester 6/pythonProject/project-soa/event_service/eventSQL:/docker-entrypoint-initdb.d
     networks:
       - EventNet
   EventSvc:
