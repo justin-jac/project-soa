@@ -1,0 +1,13 @@
+docker network create CLientNet
+
+docker network create StafNet
+
+docker network create LoginNet
+
+docker network create EventNet
+
+docker network create OrderNet
+
+docker network create OrganizerNet
+
+docker run --name OrganizerMQ -h rbthost -p 8080:15672 -p 5672:5672 -d -e RABBITMQ_DEFAULT_USER=radmin -e RABBITMQ_DEFAULT_PASS=rpass --network PetraNet rabbitmq:3.11.15-management
