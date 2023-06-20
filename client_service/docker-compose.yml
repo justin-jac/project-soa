@@ -1,0 +1,26 @@
+services:
+  clientSQL:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./clientSQL/:/docker-entrypoint-initdb.d
+    networks:
+      - ClientNet
+  ClientSvc:
+    build: ./KantinSvc/
+    image: client_svc 
+    ports:
+      - 5500:5500
+    networks:
+      - OrganizerNet
+      - ClientNet
+    depends_on: 
+      KantinSQL:
+        condition: service_started
+
+networks:
+  OrganizerNet:
+  ClientNet:
