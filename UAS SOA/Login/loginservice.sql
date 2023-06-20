@@ -26,6 +26,8 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `usertable`
 --
+CREATE DATABASE IF NOT EXISTS `loginservice` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `loginservice`;
 
 CREATE TABLE `usertable` (
   `idUser` int(11) NOT NULL,

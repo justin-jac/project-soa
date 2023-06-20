@@ -6,13 +6,14 @@ from order_producer import *
 
 db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="orderdb")
 dbc = db.cursor(dictionary=True)
-
 app = Flask(__name__)
 CORS(app)
 
 
 @app.route('/eo/order', methods = ['POST', 'GET'])
 def order():
+    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="orderdb")
+    dbc = db.cursor(dictionary=True)
     reply_req = ''
     status_code = 405
 
@@ -80,6 +81,8 @@ def order():
 
 @app.route('/eo/order/<path:id>', methods = ['GET', 'PUT', 'DELETE'])
 def order2(id):
+    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="orderdb")
+    dbc = db.cursor(dictionary=True)
     reply_req = ''
     status_code = 405
 

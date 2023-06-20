@@ -10,8 +10,10 @@ dbc = db.cursor(dictionary=True)
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/eo/client', methods = ['POST', 'GET'])
+@app.route('/organizer/client', methods = ['POST', 'GET'])
 def client():
+    db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
+    dbc = db.cursor(dictionary=True)
     replyEx_mq = ''
     status_code = 405
 
@@ -77,8 +79,10 @@ def client():
 
 
 
-@app.route('/client/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+@app.route('/organizer/client/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def client2(id):
+    db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
+    dbc = db.cursor(dictionary=True)
     replyEx_mq = ''
     status_code = 405
 

@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 -- Database: `eventdb`
 --
 
+CREATE DATABASE IF NOT EXISTS `eventdb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `eventdb`;
+
 -- --------------------------------------------------------
 
 --
@@ -49,7 +52,8 @@ INSERT INTO `events` (`idEvent`, `idOrder`, `idStaffPIC`, `namaEvent`, `deskrips
 (3, 1, 1, 'Pameran Genshin Impact', 'Pameran game Genshin Impact bertema kota Fontain', '2023-07-02', '10:00:00', '20:00:00', 1000000),
 (4, 2, 1, 'Upacara Peringatan Hari Pahlawan', 'Upacara memperingati hari Pahlawan', '2023-11-10', '07:00:00', '08:00:00', 250000),
 (5, 2, 2, 'Lomba Tarik Tambang', 'Lomba tarik tambang untuk memperingati hari Pahlawan', '2023-11-10', '09:00:00', '12:00:00', 250000),
-(7, 4, 1, 'dummyEvent1', 'deskDummy1', '2023-06-15', '01:00:00', '01:30:00', 200);
+(7, 4, 1, 'dummyEvent1', 'deskDummy1', '2023-06-15', '01:00:00', '01:30:00', 200),
+(8, 5, 2, 'dummyEvent2', 'deskDummy2', '2023-06-15', '01:00:00', '01:30:00', 100);
 
 --
 -- Indexes for dumped tables

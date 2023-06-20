@@ -14,6 +14,8 @@ CORS(app)
 
 @app.route('/eo/event', methods = ['POST', 'GET'])
 def event():
+    db = mysql.connector.connect(host="EventSQL", user="root", password="root", database="eventdb")
+    dbc = db.cursor(dictionary=True)
     reply_req = ''
     status_code = 405
 
@@ -86,6 +88,8 @@ def event():
 
 @app.route('/eo/event/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def event2(id):
+    db = mysql.connector.connect(host="EventSQL", user="root", password="root", database="eventdb")
+    dbc = db.cursor(dictionary=True)
     reply_req = ''
     status_code = 405
 

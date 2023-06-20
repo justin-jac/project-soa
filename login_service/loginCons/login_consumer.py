@@ -7,6 +7,8 @@ cursor = db.cursor(dictionary=True)
 
 
 def main():
+    db = mysql.connector.connect(host="LoginSQL", user="root", password="root",database="loginservice")
+    cursor = db.cursor(dictionary=True)
     def get_message(ch, method, properties, body):
 
         data = json.loads(body)

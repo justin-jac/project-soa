@@ -21,6 +21,9 @@ SET time_zone = "+00:00";
 -- Database: `orderdb`
 --
 
+CREATE DATABASE IF NOT EXISTS `orderdb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `orderdb`;
+
 -- --------------------------------------------------------
 
 --
@@ -44,7 +47,7 @@ CREATE TABLE `orders` (
 INSERT INTO `orders` (`idOrder`, `idClient`, `namaOrder`, `deskripsiOrder`, `tanggalOrder`, `totalHargaOrder`, `statusOrder`) VALUES
 (1, 1, 'Dies Natalis Ke-10 Genshin Impact', 'acara ulang tahun ke-10 dari game Genshin Impact', '2023-06-15', 3000000, 'not_done'),
 (2, 2, 'Peringatan Hari Pahlawan', 'Acara memperingati hari pahlawan', '2023-06-16', 500000, 'not_done'),
-(4, 1, 'dummyOrder1', 'dummydesk', '2023-06-15', 100, 'not_done'),
+(4, 1, 'dummyOrder1', 'dummydesk', '2023-06-15', 200, 'not_done'),
 (5, 1, 'dummyOrder2', 'dummydesk2', '2023-06-15', 100, 'not_done');
 
 -- --------------------------------------------------------
@@ -70,6 +73,7 @@ INSERT INTO `order_events` (`idEvent`, `idOrder`, `subtotal`) VALUES
 (4, 2, 250000),
 (5, 2, 250000),
 (7, 4, 200);
+(8, 5, 100);
 
 --
 -- Indexes for dumped tables

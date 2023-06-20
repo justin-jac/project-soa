@@ -7,14 +7,16 @@ from order_producer import *
 db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
 dbc = db.cursor(dictionary=True)
 
-
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/eo/order', methods = ['POST', 'GET'])
+@app.route('/organizer/order', methods = ['POST', 'GET'])
 def order():
+    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
+    dbc = db.cursor(dictionary=True)
     replyEx_mq = ''
     status_code = 405
+    
     #region GET Order
     if HTTPRequest.method == 'GET':
         auth = HTTPRequest.authorization
@@ -60,9 +62,9 @@ def order():
             dataEx_mq['order_date'] = order_date
             dataEx_mq['total_price'] = total_price
             dataEx_mq['status'] = status
-            mssg_mq = json.dumps(dataEx_mq)
+            # mssg_mq = json.dumps(dataEx_mq)
 
-            publish_message(mssg_mq, "order.new")
+            # publish_message(mssg_mq, "order.new")
             
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 201
@@ -77,8 +79,10 @@ def order():
     return resp
 
 
-@app.route('/eo/order/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+@app.route('/organizer/order/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def order2(id):
+    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
+    dbc = db.cursor(dictionary=True)
     replyEx_mq = ''
     status_code = 405
 

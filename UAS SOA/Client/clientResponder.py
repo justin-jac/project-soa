@@ -7,11 +7,16 @@ from client_producer import *
 db = mysql.connector.connect(host="localhost", user="root", password="",database="clientdb")
 cursor = db.cursor(dictionary=True)
 
+def connect():
+    db = mysql.connector.connect(host="localhost", user="root", password="",database="clientdb")
+    cursor = db.cursor(dictionary=True)
+
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/eo/client/register', methods = ['POST', 'GET'])
 def register():
+    connect()
     jsonData = ''
     statusCode = 400
     clientInfo = json.loads(HTTPRequest.data)
@@ -41,6 +46,7 @@ def register():
 
 @app.route('/eo/client/<path:id>', methods = ['POST', 'GET','PUT'])
 def getClient(id):
+    connect()
     jsonData = ''
     statusCode = 400
     if HTTPRequest.method == 'GET':
@@ -76,6 +82,7 @@ def getClient(id):
 
 @app.route('/eo/client', methods = ['POST', 'GET'])
 def getAllClient():
+    connect()
     jsonData = ''
     statusCode = 400
     sql = "SELECT * FROM clientinfo"

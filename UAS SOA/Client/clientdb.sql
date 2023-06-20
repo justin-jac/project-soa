@@ -27,6 +27,9 @@ SET time_zone = "+00:00";
 -- Table structure for table `clientinfo`
 --
 
+CREATE DATABASE IF NOT EXISTS `clientdb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `clientdb`;
+
 CREATE TABLE `clientinfo` (
   `clientId` int(11) NOT NULL,
   `namaClient` varchar(50) NOT NULL,

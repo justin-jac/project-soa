@@ -1,15 +1,21 @@
 from flask import Flask, render_template, Response as HTTPResponse, request as HTTPRequest
 import mysql.connector, json, pika, logging
+from flask_cors import CORS
 from staff_producer import *
+
 
 db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
 dbc = db.cursor(dictionary=True)
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route('/staf', methods = ['POST', 'GET'])
+@app.route('/organizer/staf', methods = ['POST', 'GET'])
 def staf():
-    jsondoc = ''
+    db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
+    dbc = db.cursor(dictionary=True)
+    replyEx_mq = ''
+    status_code = 405
 
     # HTTP method = GET
     if HTTPRequest.method == 'GET':
@@ -23,7 +29,7 @@ def staf():
 
         if data_staff != None:
             status_code = 200  # The request has succeeded
-            jsondoc = json.dumps(data_staff)
+            replyEx_mq = json.dumps(data_staff)
 
         else: 
             status_code = 404  # No resources found
@@ -41,18 +47,21 @@ def staf():
             sql = "INSERT INTO stafs (email, nama, password) VALUES (%s,%s,%s,%s)"
             dbc.execute(sql, [staffEmail, staffName, staffPass] )
             db.commit()
-            # dapatkan ID dari data kantin yang baru dimasukkan
-            staffID = dbc.lastrowid
-            data_staff = {'id':staffID}
-            jsondoc = json.dumps(data_staff)
+            
+            new_staff_id = dbc.lastrowid
+            dataEx_mq = {}
+            dataEx_mq['event'] = "staff.new"
+            dataEx_mq['id'] = new_staff_id
+            dataEx_mq['nama'] = staffName
+            dataEx_mq['password'] = staffPass
+            dataEx_mq['user_status'] = "Staff"
+            
+            mssg_mq = json.dumps(dataEx_mq)
 
-            data['event']  = 'new_staff'
-            data['staff_id'] = staffID
-            message = json.dumps(data)
-            publish_message(message,'staff.new')
-
-
-            status_code = 201
+            publish_message(mssg_mq, "staff.new")
+            
+            replyEx_mq = json.dumps(dataEx_mq)
+            status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
             status_code = 409
@@ -62,7 +71,7 @@ def staf():
     # Kirimkan JSON yang sudah dibuat ke staf
     # ------------------------------------------------------
     resp = HTTPResponse()
-    if jsondoc !='': resp.response = jsondoc
+    if replyEx_mq !='': resp.response = replyEx_mq
     resp.headers['Content-Type'] = 'application/json'
     resp.status = status_code
     return resp
@@ -71,9 +80,12 @@ def staf():
 
 
 
-@app.route('/staf/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+@app.route('/organizer/staf/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def staf2(id):
-    jsondoc = ''
+    db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
+    dbc = db.cursor(dictionary=True)    
+    replyEx_mq = ''
+    status_code= 405
 
     # HTTP method = GET
     if HTTPRequest.method == 'GET':
@@ -84,21 +96,13 @@ def staf2(id):
             data_staff = dbc.fetchone()
             # kalau data staf ada, juga ambil menu dari staf tsb.
             if data_staff != None:
-                # sql = "SELECT * FROM stafs WHERE id = %s"
-                # dbc.execute(sql, [id])
-                # data_menu = dbc.fetchall()
-                # data_staff['produk'] = data_menu
-                jsondoc = json.dumps(data_staff)
-
+                replyEx_mq = json.dumps(data_staff)
                 status_code = 200  # The request has succeeded
             else: 
                 status_code = 404  # No resources found
         else: status_code = 400  # Bad Request
 
-
-    # ------------------------------------------------------
     # HTTP method = POST
-    # ------------------------------------------------------
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
         staffEmail = data['email']
@@ -111,22 +115,24 @@ def staf2(id):
             dbc.execute(sql, [id,staffEmail,staffName,staffPass] )
             db.commit()
             # dapatkan ID dari data staf yang baru dimasukkan
-            staffID = dbc.lastrowid
-            data_staff = {'id':staffID}
-            jsondoc = json.dumps(data_staff)
+            dataEx_mq = {}
+            dataEx_mq['event'] = "staff.new"
+            dataEx_mq['id'] = id
+            dataEx_mq['nama'] = staffName
+            dataEx_mq['password'] = staffPass
+            dataEx_mq['user_status'] = "Staff"
+            
+            mssg_mq = json.dumps(dataEx_mq)
 
-            # TODO: Kirim message ke order_service melalui RabbitMQ tentang adanya data staf baru
-
-
-            status_code = 201
+            publish_message(mssg_mq, "staff.new")
+            
+            replyEx_mq = json.dumps(dataEx_mq)
+            status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
             status_code = 409
 
-
-    # ------------------------------------------------------
     # HTTP method = PUT
-    # ------------------------------------------------------
     elif HTTPRequest.method == 'PUT':
         data = json.loads(HTTPRequest.data)
          
@@ -146,13 +152,13 @@ def staf2(id):
             # teruskan json yang berisi perubahan data staf yang diterima dari Web UI
             # ke RabbitMQ disertai dengan tambahan route = 'staf.tenant.changed'
             data_baru = {}
-            data_baru['event']  = "updated_tenant"
+            data_baru['event']  = "staff_update"
             data_baru['id']     = id
-            data_baru['email']   = staffEmail
+            # data_baru['email']   = staffEmail
             data_baru['nama']   = staffName
             data_baru['password'] = staffPass
-            jsondoc = json.dumps(data_baru)
-            publish_message(jsondoc,'staf.changed')
+            replyEx_mq = json.dumps(data_baru)
+            publish_message(replyEx_mq,'staff.update')
 
             status_code = 200
         # bila ada kesalahan saat ubah data, buat XML dengan pesan error
@@ -166,14 +172,11 @@ def staf2(id):
     elif HTTPRequest.method == 'DELETE':
         data = json.loads(HTTPRequest.data)
 
-
-
-
     # ------------------------------------------------------
     # Kirimkan JSON yang sudah dibuat ke staf
     # ------------------------------------------------------
     resp = HTTPResponse()
-    if jsondoc !='': resp.response = jsondoc
+    if replyEx_mq !='': resp.response = replyEx_mq
     resp.headers['Content-Type'] = 'application/json'
     resp.status = status_code
     return resp

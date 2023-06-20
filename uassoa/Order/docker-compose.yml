@@ -6,7 +6,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - ./OrderSQL/:/docker-entrypoint-initdb.d
+      - /mnt/e/uassoa/Order/OrderSQL:/docker-entrypoint-initdb.d
     networks:
       - OrderNet
   OrderSvc:
