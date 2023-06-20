@@ -5,6 +5,7 @@ COPY ./staff.py .
 COPY ./staff_producer.py .
 
 RUN python -m pip install flask
+RUN python -m pip install flask_cors
 RUN python -m pip install pika
 RUN python -m pip install mysql-connector-python
 
