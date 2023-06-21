@@ -79,24 +79,23 @@ include 'css/colpal.php';
                 </tr>
             </thead>
 
-            <tbody id="table_body">
-                <tr class="odd">
+            <tbody id="orderlist">
+                <tr>
                     <td style="color:<?= $dark ?>">
-                        aasdasdas
+                        id
                     </td>
                     <td style="color:<?= $dark ?>">
-                        basdasda
+                        email
                     </td>
                     <td style="color:<?= $dark ?>">
-                        casdasd
+                        nama
                     </td>
                     <td style="color:<?= $dark ?>">
-                        dasdasda
+                        password
                     </td>
                     <td style="color:<?= $dark ?>">
                         <center>
                             <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button>
-                            <!-- <button type="button" class="btn btn-danger" style="background-color: <?= $p1 ?>; border-color: <?= $light ?>; color: <?= $light ?>">DELETE USER</button> -->
                         </center>
                     </td>
                 </tr>
@@ -112,26 +111,72 @@ include 'css/colpal.php';
 </html>
 
 <script>
-    function getOrderList() {
+    function getStaffList() {
         $.ajax({
             type: "GET",
-            url: "http://localhost:5500/eo/order",
+            url: "http://localhost:5500/organizer/staf",
             success: function(response) {
                 // Handle success response
-                var orders = response;
-                var orderList = $("#orderList");
-                orderList.empty();
 
-                for (var i = 0; i < orders.length; i++) {
-                    var order = orders[i];
-                    var orderRow = createOrderRow(order);
-                    orderList.append(orderRow);
+                var staffs = response;
+                var staffList = $("#staffList");
+                staffList.empty();
+
+                for (var i = 0; i < staffs.length; i++) {
+                    var staff = staffs[i];
+                    var orderRow = createStaffRow(staff);
+                    staffList.append(orderRow);
                 }
+
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                console.log("Failed to retrieve order list: " + error);
+                console.log("Failed to retrieve staff list: " + error);
             }
         });
     }
+
+    // Call the function to retrieve and display the staff list when the page loads
+    $(document).ready(function() {
+        getStaffList();
+    });
+
+    // Function to dynamically create the staff rows
+    function createStaffRow(staff) {
+        var orderRow = $("<tr id='staff-row-" + staff.new_staff_id + "'></tr>");
+        orderRow.append("<td>" + staff.new_staff_id + "</td>");
+        orderRow.append("<td><input type='text' class='id-client' value='" + staff.new_staff_id + "' disabled></td>");
+        orderRow.append("<td><input type='text' class='nama-staff' value='" + staff.staffName + "' disabled></td>");
+        orderRow.append("<td><input type='text' class='password-staff' value='" + staff.staffPass + "' disabled></td>");
+
+        // orderRow.append('<center><button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button></center>');
+
+        // var actionsCell = $("<td></td>");
+        // actionsCell.append("<button class='edit-staff' onclick='editOrder(" + staff.idOrder + ")'>Edit</button>");
+        // actionsCell.append("<button class='save-staff' onclick='saveOrder(" + staff.idOrder + ")' style='display:none'>Save</button>");
+        // actionsCell.append("<button class='delete-staff' onclick='deleteOrder(" + staff.idOrder + ")'>Delete</button>");
+        // orderRow.append(actionsCell);
+
+        return orderRow;
+    }
 </script>
+
+<!-- <tr>
+    <td style="color:<?= $dark ?>">
+        id
+    </td>
+    <td style="color:<?= $dark ?>">
+        email
+    </td>
+    <td style="color:<?= $dark ?>">
+        nama
+    </td>
+    <td style="color:<?= $dark ?>">
+        password
+    </td>
+    <td style="color:<?= $dark ?>">
+        <center>
+            <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button>
+        </center>
+    </td>
+</tr> -->
