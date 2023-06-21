@@ -6,7 +6,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - /mnt/d/Coding Area/Semester 6/pythonProject/project-soa/order_service/orderSQL/:/docker-entrypoint-initdb.d
+      - ./orderSQL/:/docker-entrypoint-initdb.d
     networks:
       - OrderNet
   OrderSvc:

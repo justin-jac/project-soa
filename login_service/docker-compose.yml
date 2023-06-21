@@ -6,7 +6,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - /mnt/d/Coding Area/Semester 6/pythonProject/project-soa/login_service/loginSQL/:/docker-entrypoint-initdb.d
+      - ./loginSQL/:/docker-entrypoint-initdb.d
     networks:
       - LoginNet
   LoginSvc:
