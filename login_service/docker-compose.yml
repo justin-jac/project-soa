@@ -10,7 +10,7 @@ services:
     networks:
       - LoginNet
   LoginSvc:
-    build: ./LoginSvc/
+    build: ./loginSvc/
     image: login_svc
     ports:
       - 5500:5500
@@ -21,7 +21,7 @@ services:
       LoginSQL:
         condition: service_started
   LoginCons:
-    build: ./LoginCons/
+    build: ./loginCons/
     image: login_cons
     networks:
       - OrganizerNet

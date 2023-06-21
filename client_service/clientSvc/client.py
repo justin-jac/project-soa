@@ -40,7 +40,7 @@ def client():
     # HTTP method = POST
     elif HTTPRequest.method == 'POST':
         try:
-            data = json.loads(HTTPRequest.get_data())
+            data = json.loads(HTTPRequest.data)
             print(f"Received data: {data}")  # Add this debug statement
             # Rest of the code
         except json.decoder.JSONDecodeError as e:

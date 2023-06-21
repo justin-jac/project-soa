@@ -10,7 +10,7 @@ services:
     networks:
       - OrderNet
   OrderSvc:
-    build: ./OrderSvc/
+    build: ./orderSvc/
     image: order_svc
     ports:
       - 5500:5500
@@ -21,7 +21,7 @@ services:
       OrderSQL:
         condition: service_started
   OrderCons:
-    build: ./OrderCons/
+    build: ./orderCons/
     image: order_cons
     networks:
       - OrganizerNet
