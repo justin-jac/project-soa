@@ -79,7 +79,7 @@ include 'css/colpal.php';
                 </tr>
             </thead>
 
-            <tbody id="orderlist">
+            <tbody id="staffList">
                 <tr>
                     <td style="color:<?= $dark ?>">
                         id
@@ -102,9 +102,12 @@ include 'css/colpal.php';
             </tbody>
 
         </table>
-        <!-- <center style="margin: 25px;">
-            <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD USER</button>
-        </center> -->
+        <center style="margin: 25px;">
+            <a href="staff_add.php">
+                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD USER</button>
+
+            </a>
+        </center>
     </div>
 </body>
 
@@ -114,7 +117,7 @@ include 'css/colpal.php';
     function getStaffList() {
         $.ajax({
             type: "GET",
-            url: "http://localhost:5500/organizer/staf",
+            url: "http://localhost:5510/organizer/staf",
             success: function(response) {
                 // Handle success response
 
@@ -143,11 +146,11 @@ include 'css/colpal.php';
 
     // Function to dynamically create the staff rows
     function createStaffRow(staff) {
-        var orderRow = $("<tr id='staff-row-" + staff.new_staff_id + "'></tr>");
-        orderRow.append("<td>" + staff.new_staff_id + "</td>");
-        orderRow.append("<td><input type='text' class='id-client' value='" + staff.new_staff_id + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='nama-staff' value='" + staff.staffName + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='password-staff' value='" + staff.staffPass + "' disabled></td>");
+        var orderRow = $("<tr id='staff-row-" + staff.id + "'></tr>");
+        orderRow.append("<td>" + staff.id + "</td>");
+        orderRow.append("<td><input type='text' class='id-client' value='" + staff.email + "' disabled></td>");
+        orderRow.append("<td><input type='text' class='nama-staff' value='" + staff.nama + "' disabled></td>");
+        orderRow.append("<td><input type='text' class='password-staff' value='" + staff.password + "' disabled></td>");
 
         // orderRow.append('<center><button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button></center>');
 

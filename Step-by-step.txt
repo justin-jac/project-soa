@@ -3,12 +3,13 @@ Step-by-step:
 2) docker compose up
 3) ctrl + c
 4) buka wsl baru
-5) docker network connect [nama network]_service_OrganizerNet OrganizerMQ
+5) ketik docker network ls untuk melihat network yang dibuat (misal staff, maka staff_service_OrganizeNet)
+5) docker network connect [nama network]_service_OrganizerNet OrganizerMQ, connectkan network OrganizeNet pada service
 6) run ulang container di docker
-7) event: http://localhost:5540/organizer/event
+
+7) 
+event: http://localhost:5540/organizer/event
 order: http://localhost:5530/organizer/order
 login: http://localhost:5520/organizer/login
-staff: http://localhost:5520/organizer/staff
-client: http://localhost:5520/organizer/client
-
-
+staff: http://localhost:5510/organizer/staf
+client: http://localhost:5500/organizer/client
