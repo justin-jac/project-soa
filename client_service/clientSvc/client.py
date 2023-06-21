@@ -6,15 +6,17 @@ from client_producer import *
 db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
 dbc = db.cursor(dictionary=True)
 
+def connect():
+    db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
+    dbc = db.cursor(dictionary=True)
+    return db, dbc
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/organizer/client', methods = ['POST', 'GET'])
 def client():
-    db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
-    logging.warning("ambil data")
-    dbc = db.cursor(dictionary=True)
+    db, dbc = connect()
     replyEx_mq = ''
     status_code = 405
 
@@ -37,12 +39,19 @@ def client():
 
     # HTTP method = POST
     elif HTTPRequest.method == 'POST':
-        data = json.loads(HTTPRequest.data)
-        logging.warning(data)
-        clientEmail = data['email']
-        clientName = data['nama']
-        contact = data['contact_person']
-        clientPass = data['password']
+        try:
+            data = json.loads(HTTPRequest.get_data())
+            print(f"Received data: {data}")  # Add this debug statement
+            # Rest of the code
+        except json.decoder.JSONDecodeError as e:
+            # Handle the JSON decoding error
+            # You can print an error message or return an appropriate response
+            status_code = 400  # Bad Request
+            replyEx_mq = "Invalid JSON data: " + str(e)
+        clientEmail = data["email"]
+        clientName = data["nama"]
+        contact = data["contact_person"]
+        clientPass = data["password"]
 
         try:
             # simpan nama kantin, dan gedung ke database
@@ -52,11 +61,11 @@ def client():
 
             new_client_id = dbc.lastrowid
             dataEx_mq = {}
-            dataEx_mq['event'] = "client.new"
-            dataEx_mq['id'] = new_client_id
-            dataEx_mq['nama'] = clientName
-            dataEx_mq['password'] = clientPass
-            dataEx_mq['user_status'] = "Client"
+            dataEx_mq["event"] = "client.new"
+            dataEx_mq["id"] = new_client_id
+            dataEx_mq["nama"] = clientName
+            dataEx_mq["password"] = clientPass
+            dataEx_mq["user_status"] = "Client"
             
             mssg_mq = json.dumps(dataEx_mq)
 
@@ -83,8 +92,7 @@ def client():
 
 @app.route('/organizer/client/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def client2(id):
-    db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
-    dbc = db.cursor(dictionary=True)
+    db, dbc = connect()
     replyEx_mq = ''
     status_code = 405
 
