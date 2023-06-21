@@ -1,0 +1,14 @@
+Step-by-step:
+1) wsl ke service-directory yang mau (../client_service)
+2) docker compose up
+3) ctrl + c
+4) buka wsl baru
+5) docker network connect [nama network]_service_OrganizerNet OrganizerMQ
+6) run ulang container di docker
+7) event: http://localhost:5540/organizer/event
+order: http://localhost:5530/organizer/order
+login: http://localhost:5520/organizer/login
+staff: http://localhost:5520/organizer/staff
+client: http://localhost:5520/organizer/client
+
+
