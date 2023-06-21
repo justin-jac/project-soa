@@ -1,0 +1,35 @@
+services:
+  LoginSQL:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - /mnt/d/Coding Area/Semester 6/pythonProject/project-soa/login_service/loginSQL/:/docker-entrypoint-initdb.d
+    networks:
+      - LoginNet
+  LoginSvc:
+    build: ./LoginSvc/
+    image: login_svc
+    ports:
+      - 5500:5500
+    networks:
+      - OrganizerNet
+      - LoginNet
+    depends_on: 
+      LoginSQL:
+        condition: service_started
+  LoginCons:
+    build: ./LoginCons/
+    image: login_cons
+    networks:
+      - OrganizerNet
+      - LoginNet
+    depends_on: 
+      LoginSQL:
+        condition: service_started
+
+networks:
+  OrganizerNet:
+  LoginNet:
