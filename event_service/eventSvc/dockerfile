@@ -9,6 +9,6 @@ RUN python -m pip install pika
 RUN python -m pip install mysql-connector-python
 RUN python -m pip install flask_cors
 
-EXPOSE 5600/tcp
+EXPOSE 5540/tcp
 
-CMD python -m flask --app event run --host=0.0.0.0 -p 5600
+CMD python -m flask --app event run --host=0.0.0.0 -p 5540

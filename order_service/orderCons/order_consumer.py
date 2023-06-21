@@ -1,10 +1,13 @@
 import pika, sys, os
 import mysql.connector,logging, json
 
-
-db = mysql.connector.connect(host="OrderSQL", user="root", password="root",database="order")
+db = mysql.connector.connect(host="OrderSQL", user="root", password="root",database="eventorder")
 dbc = db.cursor(dictionary=True)
-
+    
+def connect():
+    db = mysql.connector.connect(host="OrderSQL", user="root", password="root",database="eventorder")
+    dbc = db.cursor(dictionary=True)
+    return db, dbc
 
 def main():
     def get_message(ch, method, properties, body):

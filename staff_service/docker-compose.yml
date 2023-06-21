@@ -13,12 +13,12 @@ services:
     build: ./staffSvc/
     image: staff_svc
     ports:
-      - 5500:5500
+      - 5510:5510
     networks:
       - OrganizerNet
       - StafNet
     depends_on: 
-      OrderSQL:
+      staffSQL:
         condition: service_started
 
 networks:

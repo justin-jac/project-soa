@@ -69,7 +69,7 @@ def client():
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            publish_message(mssg_mq, "client.new")
+            # publish_message(mssg_mq, "client.new")
             
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200

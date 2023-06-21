@@ -4,16 +4,20 @@ from flask_cors import CORS
 from staff_producer import *
 
 
-db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
+db = mysql.connector.connect(host="staffSQL", user="root", password="root",database="staff")
 dbc = db.cursor(dictionary=True)
+
+def connect():
+    db = mysql.connector.connect(host="staffSQL", user="root", password="root",database="staff")
+    dbc = db.cursor(dictionary=True)
+    return db, dbc
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/organizer/staf', methods = ['POST', 'GET'])
 def staf():
-    db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
-    dbc = db.cursor(dictionary=True)
+    db , dbc = connect()
     replyEx_mq = ''
     status_code = 405
 
@@ -37,30 +41,38 @@ def staf():
     # HTTP method = POST
 
     elif HTTPRequest.method == 'POST':
-        data = json.loads(HTTPRequest.data)
-        staffEmail = data['email']
-        staffName = data['nama']
-        staffPass = data['password']
+        try:
+            data = json.loads(HTTPRequest.data)
+            print(f"Received data: {data}")  # Add this debug statement
+            # Rest of the code
+        except json.decoder.JSONDecodeError as e:
+            # Handle the JSON decoding error
+            # You can print an error message or return an appropriate response
+            status_code = 400  # Bad Request
+            replyEx_mq = "Invalid JSON data: " + str(e)
+        staffEmail = data["email"]
+        staffName = data["nama"]
+        staffPass = data["password"]
 
         try:
             # simpan nama kantin, dan gedung ke database
-            sql = "INSERT INTO stafs (email, nama, password) VALUES (%s,%s,%s,%s)"
+            sql = "INSERT INTO stafs (email, nama, password) VALUES (%s,%s,%s)"
             dbc.execute(sql, [staffEmail, staffName, staffPass] )
             db.commit()
             
             new_staff_id = dbc.lastrowid
             dataEx_mq = {}
-            dataEx_mq['event'] = "staff.new"
-            dataEx_mq['id'] = new_staff_id
-            dataEx_mq['nama'] = staffName
-            dataEx_mq['password'] = staffPass
-            dataEx_mq['user_status'] = "Staff"
+            dataEx_mq["event"] = "staff.new"
+            dataEx_mq["id"] = new_staff_id
+            dataEx_mq["nama"] = staffName
+            dataEx_mq["password"] = staffPass
+            dataEx_mq["user_status"] = "Staff"
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            publish_message(mssg_mq, "staff.new")
+            # publish_message(mssg_mq, "staff.new")
             
-            replyEx_mq = json.dumps(dataEx_mq)
+            # replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
@@ -82,8 +94,7 @@ def staf():
 
 @app.route('/organizer/staf/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def staf2(id):
-    db = mysql.connector.connect(host="stafsQL", user="root", password="root",database="staf")
-    dbc = db.cursor(dictionary=True)    
+    db, dbc = connect()   
     replyEx_mq = ''
     status_code= 405
 
@@ -105,28 +116,28 @@ def staf2(id):
     # HTTP method = POST
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
-        staffEmail = data['email']
-        staffName = data['nama']
-        staffPass = data['password']
+        staffEmail = data["email"]
+        staffName = data["nama"]
+        staffPass = data["password"]
 
         try:
             # simpan nama kantin, dan gedung ke database
-            sql = "INSERT INTO stafs (id, email, nama, password) VALUES (%s,%s,%s,%s,%s)"
+            sql = "INSERT INTO stafs (id, email, nama, password) VALUES (%s,%s,%s,%s)"
             dbc.execute(sql, [id,staffEmail,staffName,staffPass] )
             db.commit()
             # dapatkan ID dari data staf yang baru dimasukkan
             dataEx_mq = {}
-            dataEx_mq['event'] = "staff.new"
-            dataEx_mq['id'] = id
-            dataEx_mq['nama'] = staffName
-            dataEx_mq['password'] = staffPass
-            dataEx_mq['user_status'] = "Staff"
+            dataEx_mq["event"] = "staff.new"
+            dataEx_mq["id"] = id
+            dataEx_mq["nama"] = staffName
+            dataEx_mq["password"] = staffPass
+            dataEx_mq["user_status"] = "Staff"
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            publish_message(mssg_mq, "staff.new")
+            # publish_message(mssg_mq, "staff.new")
             
-            replyEx_mq = json.dumps(dataEx_mq)
+            # replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
@@ -136,9 +147,9 @@ def staf2(id):
     elif HTTPRequest.method == 'PUT':
         data = json.loads(HTTPRequest.data)
          
-        staffEmail = data['email']
-        staffName = data['nama']
-        staffPass = data['password']
+        staffEmail = data["email"]
+        staffName = data["nama"]
+        staffPass = data["password"]
 
         messagelog = 'PUT id: ' + str(id) + ' | nama: ' + staffName + ' | email: ' + staffEmail
         logging.warning("Received: %r" % messagelog)
@@ -152,11 +163,11 @@ def staf2(id):
             # teruskan json yang berisi perubahan data staf yang diterima dari Web UI
             # ke RabbitMQ disertai dengan tambahan route = 'staf.tenant.changed'
             data_baru = {}
-            data_baru['event']  = "staff_update"
-            data_baru['id']     = id
+            data_baru["event"]  = "staff_update"
+            data_baru["id"]     = id
             # data_baru['email']   = staffEmail
-            data_baru['nama']   = staffName
-            data_baru['password'] = staffPass
+            data_baru["nama"]   = staffName
+            data_baru["password"] = staffPass
             replyEx_mq = json.dumps(data_baru)
             publish_message(replyEx_mq,'staff.update')
 

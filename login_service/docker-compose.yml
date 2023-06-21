@@ -2,7 +2,7 @@ services:
   LoginSQL:
     image: mysql
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
@@ -13,7 +13,7 @@ services:
     build: ./loginSvc/
     image: login_svc
     ports:
-      - 5500:5500
+      - 5520:5520
     networks:
       - OrganizerNet
       - LoginNet

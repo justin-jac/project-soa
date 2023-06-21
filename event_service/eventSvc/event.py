@@ -7,7 +7,7 @@ dbc = db.cursor(dictionary=True)
 
 app = Flask(__name__)
 
-@app.route('/eo/event', methods = ['POST', 'GET'])
+@app.route('/organizer/event', methods = ['POST', 'GET'])
 def event():
     replyEx_mq = ''
     status_code = 405
@@ -85,7 +85,7 @@ def event():
     return resp
 
 
-@app.route('/eo/event/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+@app.route('/organizer/event/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def event2(id):
     replyEx_mq = ''
     status_code = 405

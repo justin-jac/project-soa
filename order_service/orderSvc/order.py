@@ -28,7 +28,7 @@ def order():
 
         if data_orders != None:
             status_code = 200  # The request has succeeded
-            reply_req = json.dumps(data_orders, default=str)
+            replyEx_mq = json.dumps(data_orders, default=str)
         else:
             status_code = 404  # No resources found
     #endregion
