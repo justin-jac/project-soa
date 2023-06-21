@@ -13,6 +13,7 @@ CORS(app)
 @app.route('/organizer/client', methods = ['POST', 'GET'])
 def client():
     db = mysql.connector.connect(host="ClientSQL", user="root", password="root",database="client")
+    logging.warning("ambil data")
     dbc = db.cursor(dictionary=True)
     replyEx_mq = ''
     status_code = 405
@@ -37,6 +38,7 @@ def client():
     # HTTP method = POST
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
+        logging.warning(data)
         clientEmail = data['email']
         clientName = data['nama']
         contact = data['contact_person']

@@ -10,7 +10,7 @@ services:
     networks:
       - ClientNet
   ClientSvc:
-    build: ./KantinSvc/
+    build: ./clientSvc/
     image: client_svc 
     ports:
       - 5500:5500
@@ -18,7 +18,7 @@ services:
       - OrganizerNet
       - ClientNet
     depends_on: 
-      KantinSQL:
+      clientSQL:
         condition: service_started
 
 networks:

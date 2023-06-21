@@ -27,6 +27,9 @@ SET time_zone = "+00:00";
 -- Table structure for table `clients`
 --
 
+CREATE DATABASE IF NOT EXISTS `client` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `client`;
+
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -40,9 +43,9 @@ CREATE TABLE `clients` (
 --
 
 INSERT INTO `clients` (`id`, `email`, `nama`, `contact_person`, `password`) VALUES
-(4, 'tes123@gmail.com', 'Justin', '087365432178', 'mariminum'),
-(5, 'tes124@gmail.com', 'Filbert', '087266432187', 'maritidur'),
-(6, 'tes125@gmail.com', 'Acen', '081144328892', 'marimakan');
+(1, 'tes123@gmail.com', 'Justin', '087365432178', 'mariminum'),
+(2, 'tes124@gmail.com', 'Filbert', '087266432187', 'maritidur'),
+(3, 'tes125@gmail.com', 'Acen', '081144328892', 'marimakan');
 
 --
 -- Indexes for dumped tables
