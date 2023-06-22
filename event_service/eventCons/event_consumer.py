@@ -19,6 +19,11 @@ def main():
             sql = "DELETE FROM events WHERE id_order=%s"
             dbc.execute(sql, [delete_id_order])
             db.commit()
+            
+            # DELETE order
+            sql = "DELETE FROM event_order WHERE id=%s"
+            dbc.execute(sql, [delete_id_order])
+            db.commit()
 
             message = "Succesfully deleted event with id_order " + str(delete_id_order)
         
@@ -33,7 +38,7 @@ def main():
             message = 'Added order' + str(id_order) + ' to event DB'
             
         if event == "staff.new":
-            id_staff = data["id_staff"]
+            id_staff = data["id"]
             
             # INSERT staff
             sql = "INSERT INTO `event_staff`(`id`) VALUES ('%s')"
@@ -43,10 +48,10 @@ def main():
             message = 'Added staff' + str(id_order) + ' to event DB'
             
         if event == "staff.delete":
-            id_staff = data["id_staff"]
+            id_staff = data["id"]
             
             # DELETE staff
-            sql = "DELETE FROM events WHERE id_order=%s"
+            sql = "DELETE FROM `event_staff` WHERE id=%s"
             dbc.execute(sql, [id_staff])
             db.commit()
             
@@ -64,9 +69,8 @@ def main():
     channel.exchange_declare(exchange='OrganizerEX', exchange_type='topic')
     new_queue = channel.queue_declare(queue='', exclusive=True)
     new_queue_name = new_queue.method.queue
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.new')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.update')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.delete')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='order.*')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staf.*')
     
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=new_queue_name, on_message_callback=get_message)

@@ -166,7 +166,8 @@ def client2(id):
             dataEx_mq = {}
             dataEx_mq['event']  = "client.update"
             dataEx_mq['id']     = id
-            dataEx_mq['nama']   = clientName
+            dataEx_mq['contact_person'] = contact
+            dataEx_mq['username']   = clientEmail
             dataEx_mq['password'] = clientPass
             dataEx_mq['user_status'] = "Client"
             mssg_mq = json.dumps(dataEx_mq)
