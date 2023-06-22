@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 15, 2023 at 01:16 PM
+-- Generation Time: Jun 22, 2023 at 06:09 PM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 8.0.9
 
@@ -37,14 +37,13 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Indexes for dumped tables
+-- Dumping data for table `users`
 --
 
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id_user`);
+INSERT INTO `users` (`id_user`, `username`, `password`, `user_status`) VALUES
+(1, 'Justin', 'mariminum', 'Client'),
+(2, 'Filbert', 'maritidur', 'Client'),
+(2, 'Kumala', 'maritidur', 'Staff');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
