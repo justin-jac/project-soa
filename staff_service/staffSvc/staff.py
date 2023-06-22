@@ -156,8 +156,8 @@ def staf2(id):
 
         try:
             # ubah nama kantin dan gedung di database
-            sql = "UPDATE staf set email=%s, nama=%s, password=%s where id=%s"
-            dbc.execute(sql, [staffEmail, staffName, staffPass,id] )
+            sql = "UPDATE stafs set email=%s, nama=%s, password=%s where id=%s"
+            dbc.execute(sql, [staffEmail, staffName, staffPass, id] )
             db.commit()
 
             # teruskan json yang berisi perubahan data staf yang diterima dari Web UI
@@ -169,19 +169,34 @@ def staf2(id):
             data_baru["nama"]   = staffName
             data_baru["password"] = staffPass
             replyEx_mq = json.dumps(data_baru)
-            publish_message(replyEx_mq,'staff.update')
+            # publish_message(replyEx_mq,'staff.update')
 
             status_code = 200
         # bila ada kesalahan saat ubah data, buat XML dengan pesan error
         except mysql.connector.Error as err:
             status_code = 409
 
-
     # ------------------------------------------------------
     # HTTP method = DELETE
     # ------------------------------------------------------
     elif HTTPRequest.method == 'DELETE':
-        data = json.loads(HTTPRequest.data)
+        if id.isnumeric():
+            try:
+                sql = "DELETE FROM stafs WHERE id = %s"
+                dbc.execute(sql, [id])
+                db.commit()
+                
+                dataEx_mq = {}
+                dataEx_mq["event"]  = "staff.delete"
+                dataEx_mq["id"]     = id
+                dataEx_mq["user_status"] = "Staff"
+                replyEx_mq = json.dumps(dataEx_mq)
+                
+                status_code = 200
+                # publish_message(replyEx_mq,'staff.delete')
+            except mysql.connector.Error as err:
+                status_code = 409
+        else: status_code = 400  # Bad Request
 
     # ------------------------------------------------------
     # Kirimkan JSON yang sudah dibuat ke staf
