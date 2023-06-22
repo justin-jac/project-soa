@@ -170,7 +170,7 @@ def client2(id):
             dataEx_mq['user_status'] = "Client"
             mssg_mq = json.dumps(dataEx_mq)
 
-            publish_message(mssg_mq, "client.update")
+            # publish_message(mssg_mq, "client.update")
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat ubah data, buat XML dengan pesan error
@@ -181,7 +181,23 @@ def client2(id):
     # HTTP method = DELETE
     # ------------------------------------------------------
     elif HTTPRequest.method == 'DELETE':
-        data = json.loads(HTTPRequest.data)
+        if id.isnumeric():
+            try:
+                sql = "DELETE FROM clients WHERE id = %s"
+                dbc.execute(sql, [id])
+                db.commit()
+                
+                dataEx_mq = {}
+                dataEx_mq["event"]  = "client.delete"
+                dataEx_mq["id"]     = id
+                dataEx_mq["user_status"] = "Client"
+                replyEx_mq = json.dumps(dataEx_mq)
+                
+                status_code = 200
+                # publish_message(replyEx_mq,'staff.delete')
+            except mysql.connector.Error as err:
+                status_code = 409
+        else: status_code = 400  # Bad Request
 
     # ------------------------------------------------------
     # Kirimkan JSON yang sudah dibuat ke client
