@@ -1,25 +1,11 @@
-<?php
-include 'css/colpal.php';
-
-?>
-
-<style>
-    #example_wrapper {
-        background: white;
-        padding: 50px;
-        border-color: black;
-        border-radius: 20px;
-        border-style: solid;
-    }
-</style>
-
-<html lang="en">
 <!doctype html>
 
+<html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>STAFF LIST</title>
+
+    <meta charset="UTF-8">
+
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
@@ -52,134 +38,122 @@ include 'css/colpal.php';
     <link rel="stylesheet" href="font/static/Quicksand-SemiBold.ttf">
     <!--  -->
 
-    <script>
-        $(document).ready(function() {
-            $('#example').DataTable();
-        });
-    </script>
-    <!--  -->
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/background2.css">
 
 </head>
 
-<body style="background-color:<?= $light ?>; font-family:Quicksand; color:<?= $dark ?>">
-    <div class="container">
-        <center>
-            <h1 style="margin: 3%;font-family:Quicksand;">STAFF TABLE MANAGEMENT</h1>
-        </center>
+<body>
 
-        <table id="example" class="table table-striped table-bordered" style="width: 100%; color: <?= $dark ?>">
+    <section>
+        <div class="signin">
+            <div class="content">
+                <h2>Log In</h2>
+                <div class="form">
 
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Email</th>
-                    <th>Nama</th>
-                    <th>Password (Sementara)</th>
-                    <th></th>
-                </tr>
-            </thead>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="email_input" placeholder="name@example.com">
+                        <label for="floatingInput">Email</label>
+                    </div>
 
-            <tbody id="staffList">
-                <tr>
-                    <td style="color:<?= $dark ?>">
-                        id
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        email
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        nama
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        password
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        <center>
-                            <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password_input" placeholder="Password">
+                        <label for="floatingInput">Password</label>
+                    </div>
+
+                    <div class="links">
+                        <a href="signup_staff.php">Signup as Staff</a>
+                        <a href="signup_client.php">Signup as Client</a>
+                    </div>
+
+                    <div>
+
+                        <center style="margin: 25px;">
+                            <button type="button" class="btn btn-success" style="padding: 10px;background: #41EAD4;color: #000;font-weight: 600;font-size: 1.35em;letter-spacing: 0.05em;cursor: pointer;width:100%" onclick="login()">SIGN UP</button>
                         </center>
-                    </td>
-                </tr>
-            </tbody>
 
-        </table>
-        <center style="margin: 25px;">
-            <a href="staff_add.php">
-                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD USER</button>
+                    </div>
 
-            </a>
-        </center>
-    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section> <!-- partial -->
+
 </body>
 
 </html>
 
 <script>
-    function getStaffList() {
+    function login() {
+        var username = $("#email_input").val(); // Get the entered username
+        var password = $("#password_input").val(); // Get the entered password
+
+        // Perform AJAX requests to check if the user is available in both URLs
         $.ajax({
             type: "GET",
             url: "http://localhost:5510/organizer/staf",
-            success: function(response) {
-                // Handle success response
-
-                var staffs = response;
-                var staffList = $("#staffList");
-                staffList.empty();
+            success: function(staffResponse) {
+                // Handle success response for staff URL
+                var staffs = staffResponse;
+                var isStaff = false;
 
                 for (var i = 0; i < staffs.length; i++) {
                     var staff = staffs[i];
-                    var orderRow = createStaffRow(staff);
-                    staffList.append(orderRow);
+                    if (staff.email === username && staff.password === password) {
+                        isStaff = true;
+                        break;
+                    }
                 }
 
+                if (isStaff) {
+                    // User is from staff URL, perform staff login action
+                    alert("Staff login successful!");
+                    window.location.replace("staff.php");
+
+                    // Redirect to the desired staff page or perform any other staff action
+                } else {
+                    // Perform another AJAX request to check if the user is available in the client URL
+                    $.ajax({
+                        type: "GET",
+                        url: "http://localhost:5500/organizer/client",
+                        success: function(clientResponse) {
+                            // Handle success response for client URL
+                            var clients = clientResponse;
+                            var isClient = false;
+
+                            for (var j = 0; j < clients.length; j++) {
+                                var client = clients[j];
+                                if (client.email === username && client.password === password) {
+                                    isClient = true;
+                                    break;
+                                }
+                            }
+
+                            if (isClient) {
+                                // User is from client URL, perform client login action
+                                alert("Client login successful!");
+                                window.location.replace("client.php");
+
+                                // Redirect to the desired client page or perform any other client action
+                            } else {
+                                // User is not available in both URLs
+                                alert("Invalid username or password!");
+                            }
+                        },
+                        error: function(clientXhr, clientStatus, clientError) {
+                            // Handle error response for client URL
+                            console.log("Failed to retrieve client list: " + clientError);
+                        }
+                    });
+                }
             },
-            error: function(xhr, status, error) {
-                // Handle error response
-                console.log("Failed to retrieve staff list: " + error);
+            error: function(staffXhr, staffStatus, staffError) {
+                // Handle error response for staff URL
+                console.log("Failed to retrieve staff list: " + staffError);
             }
         });
     }
-
-    // Call the function to retrieve and display the staff list when the page loads
-    $(document).ready(function() {
-        getStaffList();
-    });
-
-    // Function to dynamically create the staff rows
-    function createStaffRow(staff) {
-        var orderRow = $("<tr id='staff-row-" + staff.id + "'></tr>");
-        orderRow.append("<td>" + staff.id + "</td>");
-        orderRow.append("<td><input type='text' class='id-client' value='" + staff.email + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='nama-staff' value='" + staff.nama + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='password-staff' value='" + staff.password + "' disabled></td>");
-
-        // orderRow.append('<center><button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button></center>');
-
-        // var actionsCell = $("<td></td>");
-        // actionsCell.append("<button class='edit-staff' onclick='editOrder(" + staff.idOrder + ")'>Edit</button>");
-        // actionsCell.append("<button class='save-staff' onclick='saveOrder(" + staff.idOrder + ")' style='display:none'>Save</button>");
-        // actionsCell.append("<button class='delete-staff' onclick='deleteOrder(" + staff.idOrder + ")'>Delete</button>");
-        // orderRow.append(actionsCell);
-
-        return orderRow;
-    }
 </script>
-
-<!-- <tr>
-    <td style="color:<?= $dark ?>">
-        id
-    </td>
-    <td style="color:<?= $dark ?>">
-        email
-    </td>
-    <td style="color:<?= $dark ?>">
-        nama
-    </td>
-    <td style="color:<?= $dark ?>">
-        password
-    </td>
-    <td style="color:<?= $dark ?>">
-        <center>
-            <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button>
-        </center>
-    </td>
-</tr> -->

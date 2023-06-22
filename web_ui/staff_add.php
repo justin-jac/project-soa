@@ -78,9 +78,9 @@ include 'css/colpal.php';
         </div>
 
         <center style="margin: 25px;">
-            <!-- <a href="index.php"> -->
-            <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight:500;" onclick="createStaff()">SUBMIT FORM</button>
-            <!-- </a> -->
+            <a href="staff.php">
+                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight:500;" onclick="createStaff()">SUBMIT FORM</button>
+            </a>
         </center>
     </div>
 </body>
@@ -104,14 +104,14 @@ include 'css/colpal.php';
             async: false,
             data: JSON.stringify(orderData),
             contentType: "application/json",
-            success: function(response) {
-                // Handle success response
-                alert("Order created successfully!");
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                alert("Failed to create order: " + error);
-            }
+            // success: function(response) {
+            //     // Handle success response
+            //     alert("Order created successfully!");
+            // },
+            // error: function(xhr, status, error) {
+            //     // Handle error response
+            //     alert("Failed to create order: " + error);
+            // }
         });
     }
 </script>
