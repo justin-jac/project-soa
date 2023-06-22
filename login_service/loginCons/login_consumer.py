@@ -28,6 +28,10 @@ def main():
             cursor.execute(sql, [username,password,id_user,user_status] )
             db.commit()
             message = "Sukses Update Data " + username
+        elif (event == "client.delete" or event == "staff.delete"):
+            sql = "DELETE FROM users WHERE id_user = %s"
+            cursor.execute(sql, [id_user] )
+            db.commit()
 
         logging.warning("Received: %r" % message)
 
