@@ -89,6 +89,7 @@ def order2(id):
     # HTTP method = GET
     if HTTPRequest.method == 'GET':
         if id.isnumeric():
+            # ambil data kantin
             sql = "SELECT * FROM orders WHERE id_order = %s"
             dbc.execute(sql, [id])
             data_order = dbc.fetchone()
