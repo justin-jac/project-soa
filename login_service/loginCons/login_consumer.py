@@ -45,12 +45,8 @@ def main():
     channel.exchange_declare(exchange='OrganizerEX', exchange_type='topic')
     new_queue = channel.queue_declare(queue='', exclusive=True)
     new_queue_name = new_queue.method.queue
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='client.new')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='client.update')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='client.delete')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.new')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.update')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.delete')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='client.*')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.*')
 
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=new_queue_name, on_message_callback=get_message)
