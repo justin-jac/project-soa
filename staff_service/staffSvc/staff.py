@@ -163,7 +163,7 @@ def staf2(id):
             # teruskan json yang berisi perubahan data staf yang diterima dari Web UI
             # ke RabbitMQ disertai dengan tambahan route = 'staf.tenant.changed'
             data_baru = {}
-            data_baru["event"]  = "staff_update"
+            data_baru["event"]  = "staff.update"
             data_baru["id"]     = id
             # data_baru['email']   = staffEmail
             data_baru["nama"]   = staffName

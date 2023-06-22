@@ -18,12 +18,12 @@ def main():
         password = data['password']
         user_status = data['user_status']
 
-        if (event == "client_new" or event == "staff_new"):
+        if (event == "client.new" or event == "staff.new"):
             sql = "INSERT INTO users VALUES(%s,%s,%s,%s)"
             cursor.execute(sql,[id_user,username,password,user_status])
             db.commit()
             message = "Sukses Menambah Data " + username
-        elif (event == "client_update" or event == "staff_update"):
+        elif (event == "client.update" or event == "staff.update"):
             sql = "UPDATE users set username=%s, password=%s WHERE id_user=%s AND user_status=%s"
             cursor.execute(sql, [username,password,id_user,user_status] )
             db.commit()

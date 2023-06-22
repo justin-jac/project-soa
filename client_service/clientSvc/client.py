@@ -123,15 +123,21 @@ def client2(id):
             sql = "INSERT INTO clients (id, email, nama, contact_person, password) VALUES (%s,%s,%s,%s,%s)"
             dbc.execute(sql, [id,clientEmail,clientName,contact,clientPass] )
             db.commit()
-            # dapatkan ID dari data client yang baru dimasukkan
-            new_client_id = dbc.lastrowid
-            data_client = {'id':new_client_id}
-            replyEx_mq = json.dumps(data_client)
+            
+            dataEx_mq = {}
+            dataEx_mq["event"] = "client.new"
+            dataEx_mq["id"] = id
+            dataEx_mq["nama"] = clientName
+            dataEx_mq["password"] = clientPass
+            dataEx_mq["user_status"] = "Client"
+            
+            mssg_mq = json.dumps(dataEx_mq)
 
-            # TODO: Kirim message ke order_service melalui RabbitMQ tentang adanya data client baru
+            # publish_message(mssg_mq, "client.new")
+            
+            replyEx_mq = json.dumps(dataEx_mq)
 
-
-            status_code = 201
+            status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
             status_code = 409

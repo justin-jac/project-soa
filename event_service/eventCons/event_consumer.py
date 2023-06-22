@@ -64,8 +64,10 @@ def main():
     channel.exchange_declare(exchange='OrganizerEX', exchange_type='topic')
     new_queue = channel.queue_declare(queue='', exclusive=True)
     new_queue_name = new_queue.method.queue
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='order.delete')
-
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.new')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.update')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.delete')
+    
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=new_queue_name, on_message_callback=get_message)
     channel.start_consuming()
