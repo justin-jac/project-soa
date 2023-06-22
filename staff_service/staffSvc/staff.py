@@ -39,7 +39,6 @@ def staf():
             status_code = 404  # No resources found
 
     # HTTP method = POST
-
     elif HTTPRequest.method == 'POST':
         try:
             data = json.loads(HTTPRequest.data)
@@ -62,17 +61,18 @@ def staf():
             
             new_staff_id = dbc.lastrowid
             dataEx_mq = {}
-            dataEx_mq["event"] = "staff.new"
-            dataEx_mq["id"] = new_staff_id
-            dataEx_mq["nama"] = staffName
+            dataEx_mq["event"]  = "staff.update"
+            dataEx_mq["id"]     = id
+            dataEx_mq['username']   = staffEmail
+            dataEx_mq["nama"]   = staffName
             dataEx_mq["password"] = staffPass
             dataEx_mq["user_status"] = "Staff"
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            # publish_message(mssg_mq, "staff.new")
+            publish_message(mssg_mq, "staff.new")
             
-            # replyEx_mq = json.dumps(dataEx_mq)
+            replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
@@ -129,15 +129,15 @@ def staf2(id):
             dataEx_mq = {}
             dataEx_mq["event"] = "staff.new"
             dataEx_mq["id"] = id
-            dataEx_mq["nama"] = staffName
+            dataEx_mq["username"] = staffEmail
             dataEx_mq["password"] = staffPass
             dataEx_mq["user_status"] = "Staff"
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            # publish_message(mssg_mq, "staff.new")
+            publish_message(mssg_mq, "staff.new")
             
-            # replyEx_mq = json.dumps(dataEx_mq)
+            replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat insert data, buat XML dengan pesan error
         except mysql.connector.Error as err:
@@ -165,12 +165,14 @@ def staf2(id):
             data_baru = {}
             data_baru["event"]  = "staff.update"
             data_baru["id"]     = id
-            # data_baru['email']   = staffEmail
+            data_baru['username']   = staffEmail
             data_baru["nama"]   = staffName
             data_baru["password"] = staffPass
             replyEx_mq = json.dumps(data_baru)
-            # publish_message(replyEx_mq,'staff.update')
+            publish_message(replyEx_mq,'staff.update')
 
+            publish_message(mssg_mq, "client.update")
+            replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat ubah data, buat XML dengan pesan error
         except mysql.connector.Error as err:
@@ -193,7 +195,7 @@ def staf2(id):
                 replyEx_mq = json.dumps(dataEx_mq)
                 
                 status_code = 200
-                # publish_message(replyEx_mq,'staff.delete')
+                publish_message(replyEx_mq,'staff.delete')
             except mysql.connector.Error as err:
                 status_code = 409
         else: status_code = 400  # Bad Request

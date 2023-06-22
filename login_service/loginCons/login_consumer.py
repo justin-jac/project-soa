@@ -13,7 +13,7 @@ def main():
 
         data = json.loads(body)
         event = data['event']
-        id_user = data['id_user']
+        id_user = data['id']
         username = data['username']
         password = data['password']
         user_status = data['user_status']
@@ -29,8 +29,8 @@ def main():
             db.commit()
             message = "Sukses Update Data " + username
         elif (event == "client.delete" or event == "staff.delete"):
-            sql = "DELETE FROM users WHERE id_user = %s"
-            cursor.execute(sql, [id_user] )
+            sql = "DELETE FROM users WHERE id_user = %s AND user_status = %s"
+            cursor.execute(sql, [id_user, user_status] )
             db.commit()
 
         logging.warning("Received: %r" % message)

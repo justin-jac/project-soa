@@ -63,13 +63,13 @@ def client():
             dataEx_mq = {}
             dataEx_mq["event"] = "client.new"
             dataEx_mq["id"] = new_client_id
-            dataEx_mq["nama"] = clientName
+            dataEx_mq["username"] = clientEmail
             dataEx_mq["password"] = clientPass
             dataEx_mq["user_status"] = "Client"
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            # publish_message(mssg_mq, "client.new")
+            publish_message(mssg_mq, "client.new")
             
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
@@ -113,10 +113,10 @@ def client2(id):
     # HTTP method = POST
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
-        clientEmail = data['email']
-        clientName = data['nama']
-        contact = data['contact_person']
-        clientPass = data['password']
+        clientEmail = data["email"]
+        clientName = data["nama"]
+        contact = data["contact_person"]
+        clientPass = data["password"]
 
         try:
             # simpan nama kantin, dan gedung ke database
@@ -127,13 +127,14 @@ def client2(id):
             dataEx_mq = {}
             dataEx_mq["event"] = "client.new"
             dataEx_mq["id"] = id
-            dataEx_mq["nama"] = clientName
+            dataEx_mq["username"] = clientEmail
+            dataEx_mq["contact_person"] = contact
             dataEx_mq["password"] = clientPass
             dataEx_mq["user_status"] = "Client"
             
             mssg_mq = json.dumps(dataEx_mq)
 
-            # publish_message(mssg_mq, "client.new")
+            publish_message(mssg_mq, "client.new")
             
             replyEx_mq = json.dumps(dataEx_mq)
 
@@ -146,10 +147,10 @@ def client2(id):
     elif HTTPRequest.method == 'PUT':
         data = json.loads(HTTPRequest.data)
          
-        clientEmail = data['email']
-        clientName = data['nama']
-        contact = data['contact_person']
-        clientPass = data['password']
+        clientEmail = data["email"]
+        clientName = data["nama"]
+        contact = data["contact_person"]
+        clientPass = data["password"]
 
         messagelog = 'PUT id: ' + str(id) + ' | nama: ' + clientName + ' | email: ' + clientEmail
         logging.warning("Received: %r" % messagelog)
@@ -170,7 +171,7 @@ def client2(id):
             dataEx_mq['user_status'] = "Client"
             mssg_mq = json.dumps(dataEx_mq)
 
-            # publish_message(mssg_mq, "client.update")
+            publish_message(mssg_mq, "client.update")
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat ubah data, buat XML dengan pesan error
@@ -194,7 +195,7 @@ def client2(id):
                 replyEx_mq = json.dumps(dataEx_mq)
                 
                 status_code = 200
-                # publish_message(replyEx_mq,'staff.delete')
+                publish_message(replyEx_mq,'client.delete')
             except mysql.connector.Error as err:
                 status_code = 409
         else: status_code = 400  # Bad Request
