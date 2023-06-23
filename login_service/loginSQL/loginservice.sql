@@ -41,9 +41,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `username`, `password`, `user_status`) VALUES
-(1, 'Justin', 'mariminum', 'Client'),
-(2, 'Filbert', 'maritidur', 'Client'),
-(2, 'Kumala', 'maritidur', 'Staff');
+(1, 'staf111@gmail.com', 'mariminum', 'Staff'),
+(2, 'staf222@gmail.com', 'maritidur', 'Staff'),
+(3, 'staf333@gmail.com', 'marimakan', 'Staff'),
+(1, 'tes123@gmail.com', 'mariminum', 'Client'),
+(2, 'tes124@gmail.com', 'maritidur', 'Client'),
+(3, 'tes125@gmail.com', 'marimakan', 'Client');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

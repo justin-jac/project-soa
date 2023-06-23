@@ -17,9 +17,9 @@ def login():
     statusCode = 400
     
     userInfo = json.loads(HTTPRequest.data)
-    sql = "SELECT * FROM users WHERE username = %s AND password = %s"
+    sql = "SELECT id_user, user_status FROM users WHERE username = %s AND password = %s"
     cursor.execute(sql,[userInfo['username'],userInfo['password']])
-    data = cursor.fetchall()
+    data = cursor.fetchone()
     
     jsonData = json.dumps(data)
     statusCode = 200

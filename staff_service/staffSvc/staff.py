@@ -61,8 +61,8 @@ def staf():
             
             new_staff_id = dbc.lastrowid
             dataEx_mq = {}
-            dataEx_mq["event"]  = "staff.update"
-            dataEx_mq["id"]     = id
+            dataEx_mq["event"]  = "staff.new"
+            dataEx_mq["id"]     = new_staff_id
             dataEx_mq['username']   = staffEmail
             dataEx_mq["nama"]   = staffName
             dataEx_mq["password"] = staffPass
@@ -170,8 +170,7 @@ def staf2(id):
             data_baru["password"] = staffPass
             replyEx_mq = json.dumps(data_baru)
             publish_message(replyEx_mq,'staff.update')
-
-            publish_message(mssg_mq, "client.update")
+            
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 200
         # bila ada kesalahan saat ubah data, buat XML dengan pesan error
