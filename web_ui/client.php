@@ -138,8 +138,6 @@ include 'css/colpal.php';
             </tbody>
 
         </table>
-        <center style="margin: 55px;">
-        </center>
     </div>
     <!--  -->
 </body>
@@ -204,7 +202,9 @@ include 'css/colpal.php';
         return orderRow;
     }
 
-    function viewDetails() {
+    function viewDetails(id) {
+        window.location = 'order_details.php';
+
         $.ajax({
             type: "GET",
             url: "http://localhost:5530/organizer/order",
@@ -219,7 +219,10 @@ include 'css/colpal.php';
             //     // Handle error response
             //     alert("Failed to create order: " + error);
             // }
+            
         });
+
+
     }
 
     // Function to send a POST request to create a new order

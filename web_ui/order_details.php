@@ -64,7 +64,7 @@ include 'css/colpal.php';
 <body style="background-color:<?= $light ?>; font-family:Quicksand; color:<?= $dark ?>">
     <div class="container">
         <center>
-            <!-- <h1 style="margin: 3%;font-family:Quicksand;">STAFF TABLE MANAGEMENT</h1> -->
+            <h1 style="margin: 3%;font-family:Quicksand;">STAFF TABLE MANAGEMENT</h1>
         </center>
 
         <table id="example" class="table table-striped table-bordered" style="width: 100%; color: <?= $dark ?>">
@@ -72,10 +72,11 @@ include 'css/colpal.php';
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Email</th>
-                    <th>Nama</th>
-                    <th>Password (Sementara)</th>
-                    <th></th>
+                    <th>Event Name</th>
+                    <th>Description</th>
+                    <th>Sub Total Price</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                 </tr>
             </thead>
 
@@ -84,23 +85,27 @@ include 'css/colpal.php';
             </tbody>
 
         </table>
-        <center style="margin: 25px;">
-            <a href="staff_add.php">
-                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD USER</button>
-            </a>
-        </center>
+
     </div>
 </body>
 
 </html>
 
 <script>
+    // Call the function to retrieve and display the staff list when the page loads
+    $(document).ready(function() {
+        getStaffList();
+    });
+
     function getStaffList() {
+
         $.ajax({
             type: "GET",
             url: "http://localhost:5540/organizer/event",
             success: function(response) {
                 // Handle success response
+
+                var order_id = 1;
 
                 var staffs = response;
                 var staffList = $("#staffList");
@@ -108,8 +113,10 @@ include 'css/colpal.php';
 
                 for (var i = 0; i < staffs.length; i++) {
                     var staff = staffs[i];
-                    var staffRow = createStaffRow(staff);
-                    staffList.append(staffRow);
+                    if (staff.id_order === order_id) {
+                        var staffRow = createStaffRow(staff);
+                        staffList.append(staffRow);
+                    }
                 }
 
             },
@@ -120,103 +127,18 @@ include 'css/colpal.php';
         });
     }
 
-    // Call the function to retrieve and display the staff list when the page loads
-    $(document).ready(function() {
-        getStaffList();
-    });
-
     // Function to dynamically create the staff rows
     function createStaffRow(staff) {
         var staffRow = $("<tr id='staff-row-" + staff.id_event + "'></tr>");
         staffRow.append("<td>" + staff.id_event + "</td>");
-        staffRow.append("<td><input type='text' class='email-staff' value='" + staff.event_name + "' disabled></td>");
-        staffRow.append("<td><input type='text' class='nama-staff' value='" + staff.event_description + "' disabled></td>");
-        staffRow.append("<td><input type='text' class='password-staff' value='" + staff.sub_total + "' disabled></td>");
+        staffRow.append("<td>" + staff.event_name + "</td>");
+        staffRow.append("<td>" + staff.event_description + "</td>");
+        staffRow.append("<td>" + staff.sub_total + "</td>");
+        staffRow.append("<td>" + staff.start_time + "</td>");
+        staffRow.append("<td>" + staff.end_time + "</td>");
 
-        // staffRow.append('<td><center><button type="button" class="btn btn-info edit-order" onclick="editOrder(' + staff.id_order + ')">EDIT</button><button type="button" class="btn btn-success save-order" style="display:none" onclick="saveOrder(' + staff.id + ')">SAVE</button><button type="button" class="btn btn-danger" onclick="deleteStaff(' + staff.id + ')">DELETE</button></center></td>');
-
-        // var actionsCell = $("<td></td>");
-        // actionsCell.append("<button class='edit-staff' onclick='editOrder(" + staff.idOrder + ")'>Edit</button>");
-        // actionsCell.append("<button class='save-staff' onclick='saveOrder(" + staff.idOrder + ")' style='display:none'>Save</button>");
-        // actionsCell.append("<button class='delete-staff' onclick='deleteOrder(" + staff.idOrder + ")'>Delete</button>");
-        // staffRow.append(actionsCell);
 
         return staffRow;
     }
 
-    // Edit button click event handler
-    function editOrder(orderId) {
-        var orderRow = $("#staff-row-" + orderId);
-
-        // Enable input fields for editing
-        // orderRow.find(".id-client").prop("disabled", false);
-        orderRow.find(".email-staff").prop("disabled", false);
-        orderRow.find(".nama-staff").prop("disabled", false);
-        orderRow.find(".password-staff").prop("disabled", false);
-
-        orderRow.find(".edit-order").hide();
-        orderRow.find(".save-order").show();
-    }
-
-
-    // Save button click event handler
-    function saveOrder(orderId) {
-        var orderRow = $("#staff-row-" + orderId);
-
-        // Disable input fields
-        orderRow.find(".email-staff").prop("disabled", true);
-        orderRow.find(".nama-staff").prop("disabled", true);
-        orderRow.find(".password-staff").prop("disabled", true);
-
-        orderRow.find(".save-order").hide();
-        orderRow.find(".edit-order").show();
-
-        // Retrieve the updated order data
-        var updatedOrderData = {
-            // idClient: orderRow.find(".id-client").val(),
-            // namaOrder: orderRow.find(".nama-order").val(),
-            // deskripsiOrder: orderRow.find(".deskripsi-order").val(),
-            // tanggalOrder: formatDate(orderRow.find(".tanggal-order").val()),
-            // totalHargaOrder: orderRow.find(".total-harga-order").val(),
-            // statusOrder: orderRow.find(".status-order").val()
-            "email": orderRow.find(".email-staff").val(),
-            "nama": orderRow.find(".nama-staff").val(),
-            "password": orderRow.find(".password-staff").val()
-        };
-
-        // Send a PUT request to update the order
-        $.ajax({
-            type: "PUT",
-            url: "http://localhost:5510/organizer/staf/" + orderId,
-            data: JSON.stringify(updatedOrderData),
-            contentType: "application/json",
-            success: function(response) {
-                // Handle success response
-                alert("Order updated successfully!");
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                alert("Failed to update order: " + error);
-            }
-        });
-    }
-
-    // Delete button click event handler
-    function deleteStaff(staffId) {
-        if (confirm("Are you sure you want to delete this order?")) {
-            $.ajax({
-                type: "DELETE",
-                url: "http://localhost:5510/organizer/staf/" + staffId,
-                success: function(response) {
-                    // Handle success response
-                    alert("Order deleted successfully!");
-                    getStaffList(); // Refresh the order list
-                },
-                error: function(xhr, status, error) {
-                    // Handle error response
-                    alert("Failed to delete order: " + error);
-                }
-            });
-        }
-    }
 </script>

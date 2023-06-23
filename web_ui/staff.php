@@ -66,6 +66,11 @@ include 'css/colpal.php';
         <center>
             <h1 style="margin: 3%;font-family:Quicksand;">STAFF TABLE MANAGEMENT</h1>
         </center>
+        <center style="margin: 25px;">
+            <a href="order_list_view.php">
+                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">View Client's Orders</button>
+            </a>
+        </center>
 
         <table id="example" class="table table-striped table-bordered" style="width: 100%; color: <?= $dark ?>">
 
@@ -103,7 +108,6 @@ include 'css/colpal.php';
         <center style="margin: 25px;">
             <a href="staff_add.php">
                 <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD USER</button>
-
             </a>
         </center>
     </div>

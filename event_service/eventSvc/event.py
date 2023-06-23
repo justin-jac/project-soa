@@ -1,11 +1,13 @@
 from flask import Flask, render_template, Response as HTTPResponse, request as HTTPRequest
 import mysql.connector, json, pika, logging
 from event_producer import *
+from flask_cors import CORS
 
 db = mysql.connector.connect(host="EventSQL", user="root", password="root",database="event")
 dbc = db.cursor(dictionary=True)
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/organizer/event', methods = ['POST', 'GET'])
 def event():

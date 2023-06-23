@@ -72,30 +72,17 @@ include 'css/colpal.php';
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Nama Event</th>
-                    <th>Jam</th>
+                    <th>Event Name</th>
+                    <th>Description</th>
+                    <th>Sub Total Price</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                     <th></th>
                 </tr>
             </thead>
 
-            <tbody id="table_body">
-                <tr class="odd">
-                    <td style="color:<?= $dark ?>">
-                        aasdasdas
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        basdasda
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        casdasd
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        <center>
-                            <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>;font-weight:500;">EDIT</button>
-                            <button type="button" class="btn btn-danger" style="background-color: <?= $p1 ?>; border-color: <?= $light ?>; color: <?= $light ?>; font-weight:500;">DELETE</button>
-                        </center>
-                    </td>
-                </tr>
+            <tbody id="orderList">
+                
             </tbody>
 
         </table>
@@ -115,3 +102,57 @@ include 'css/colpal.php';
 
 </html>
 
+<script>
+    // Call the function to retrieve and display the order list when the page loads
+    $(document).ready(function() {
+        getOrderList();
+    });
+
+function getOrderList() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5530/organizer/order",
+            success: function(response) {
+
+                // Handle success response
+                var order_id = 1;
+
+                var orders = response;
+                var orderList = $("#orderList");
+                orderList.empty();
+
+                for (var i = 0; i < orders.length; i++) {
+                    var order = orders[i];
+
+                    if (order.id_order === order_id) {
+                    var orderRow = createOrderRow(order);
+                    orderList.append(orderRow);
+                    }
+                }
+
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.log("Failed to retrieve order list: " + error);
+            }
+        });
+    }
+
+    // Function to dynamically create the order rows
+    function createOrderRow(order) {
+        var orderRow = $("<tr id='order-row-" + order.id_order + "'></tr>");
+        orderRow.append("<td>" + order.id_order + "</td>");
+        orderRow.append("<td>" + order.order_name + "</td>");
+        orderRow.append("<td>" + order.order_description + "</td>");
+        orderRow.append("<td>" + order.order_date + "</td>");
+        orderRow.append("<td>" + order.total_price + "</td>");
+        orderRow.append("<td>" + order.status + "</td>");
+
+
+        orderRow.append('<td><center><button type="button" class="btn btn-info" style=" background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>;font-weight:500;">EDIT</button><button type="button" class="btn btn-danger" style="background-color: <?= $p1 ?>; border-color: <?= $light ?>; color: <?= $light ?>; font-weight:500;">DELETE</button></center></td>');
+
+        return orderRow;
+    }
+
+
+</script>

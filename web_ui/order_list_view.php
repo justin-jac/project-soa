@@ -72,16 +72,17 @@ include 'css/colpal.php';
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Nama Event</th>
-                    <th>Jam</th>
-                    <th>Staff Pengurus</th>
-                    <th>Nama Client</th>
+                    <th>Nama Order</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Status</th>
                     <th></th>
                 </tr>
             </thead>
 
-            <tbody id="table_body">
-                <tr class="odd">
+            <tbody id="orderList">
+                <!-- <tr class="odd">
                     <td style="color:<?= $dark ?>">
                         1
                     </td>
@@ -102,7 +103,7 @@ include 'css/colpal.php';
                             <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight:500;">ADD EVENT</button>
                         </center>
                     </td>
-                </tr>
+                </tr> -->
             </tbody>
 
         </table>
@@ -110,3 +111,53 @@ include 'css/colpal.php';
 </body>
 
 </html>
+<script>
+    // Call the function to retrieve and display the order list when the page loads
+    $(document).ready(function() {
+        getOrderList();
+    });
+
+function getOrderList() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5530/organizer/order",
+            success: function(response) {
+
+                // Handle success response
+
+                var orders = response;
+                var orderList = $("#orderList");
+                orderList.empty();
+
+                for (var i = 0; i < orders.length; i++) {
+                    var order = orders[i];
+                    var orderRow = createOrderRow(order);
+                    orderList.append(orderRow);
+                }
+
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.log("Failed to retrieve order list: " + error);
+            }
+        });
+    }
+
+    // Function to dynamically create the order rows
+    function createOrderRow(order) {
+        var orderRow = $("<tr id='order-row-" + order.id_order + "'></tr>");
+        orderRow.append("<td>" + order.id_order + "</td>");
+        orderRow.append("<td>" + order.order_name + "</td>");
+        orderRow.append("<td>" + order.order_description + "</td>");
+        orderRow.append("<td>" + order.order_date + "</td>");
+        orderRow.append("<td>" + order.total_price + "</td>");
+        orderRow.append("<td>" + order.status + "</td>");
+
+
+        orderRow.append('<td><a href="order_event_edit.php"><center><button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight:500;">ADD EVENT</button></a></center></td>');
+
+        return orderRow;
+    }
+
+
+</script>
