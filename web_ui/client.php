@@ -1,6 +1,21 @@
 <?php
 include 'css/colpal.php';
+
+session_start();
+
+if (isset($_GET['id_user'])) {
+    $id_user = $_GET['id_user'];
+
+    // Use the $id_user value as needed
+
+    // Store it in the session if required
+    $_SESSION['id_user'] = $id_user;
+    echo($_SESSION['id_user']);
+} else {
+    // Handle the case when id_user is not provided
+}
 ?>
+
 
 
 <style>
@@ -151,7 +166,7 @@ include 'css/colpal.php';
             type: "GET",
             url: "http://localhost:5530/organizer/order",
             success: function(response) {
-                var client_id_temp = 1
+                var client_id_temp = <?=$_SESSION['id_user']?>
 
                 // Handle success response
 
@@ -189,15 +204,7 @@ include 'css/colpal.php';
         orderRow.append("<td><input type='text' class='date-order' value='" + order.order_date + "' disabled></td>");
         orderRow.append("<td><input type='text' class='price-order' value='" + order.total_price + "' disabled></td>");
 
-        // orderRow.append('<td><center><button type="button" class="btn btn-info edit-order" onclick="editOrder(' + order.id_order + ')">EDIT</button><button type="button" class="btn btn-success save-order" style="display:none" onclick="saveOrder(' + order.id_order + ')">SAVE</button><button type="button" class="btn btn-danger" onclick="deleteorder(' + order.id_order + ')">DELETE</button></center></td>');
-
         orderRow.append('<td><center><button type="button" class="btn btn-info edit-order" onclick="viewDetails(' + order.id_order + ')">VIEW DETAILS</button></center></td>');
-
-        // var actionsCell = $("<td></td>");
-        // actionsCell.append("<button class='edit-order' onclick='editOrder(" + order.idOrder + ")'>Edit</button>");
-        // actionsCell.append("<button class='save-order' onclick='saveOrder(" + order.idOrder + ")' style='display:none'>Save</button>");
-        // actionsCell.append("<button class='delete-order' onclick='deleteOrder(" + order.idOrder + ")'>Delete</button>");
-        // orderRow.append(actionsCell);
 
         return orderRow;
     }
@@ -211,14 +218,6 @@ include 'css/colpal.php';
             async: false,
             data: JSON.stringify(orderData),
             contentType: "application/json",
-            // success: function(response) {
-            //     // Handle success response
-            //     alert("Order created successfully!");
-            // },
-            // error: function(xhr, status, error) {
-            //     // Handle error response
-            //     alert("Failed to create order: " + error);
-            // }
             
         });
 
@@ -228,12 +227,7 @@ include 'css/colpal.php';
     // Function to send a POST request to create a new order
     function createOrder() {
         var orderData = {
-            // "email": $("#email_input").val(),
-            // "nama": $("#nama_input").val(),
-            // "password": $("#password_input").val(),
-
-            // "id_client": $("#nama_input").val(),
-            "id_client": 1,
+            "id_client": <?=$_SESSION['id_user']?>,
             "order_name": $("#nama_input").val(),
             "order_description": $("#description_input").val(),
             "order_date": $("#date_input").val(),
@@ -249,14 +243,6 @@ include 'css/colpal.php';
             async: false,
             data: JSON.stringify(orderData),
             contentType: "application/json",
-            // success: function(response) {
-            //     // Handle success response
-            //     alert("Order created successfully!");
-            // },
-            // error: function(xhr, status, error) {
-            //     // Handle error response
-            //     alert("Failed to create order: " + error);
-            // }
         });
     }
 </script>

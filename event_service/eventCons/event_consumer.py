@@ -7,6 +7,8 @@ dbc = db.cursor(dictionary=True)
 
 
 def main():
+    db = mysql.connector.connect(host="EventSQL", user="root", password="root",database="event")
+    dbc = db.cursor(dictionary=True)
     def get_message(ch, method, properties, body):
         data = json.loads(body)
         event = data['event']

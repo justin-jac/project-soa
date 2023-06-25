@@ -67,7 +67,7 @@ include 'css/colpal.php';
             <h1 style="margin: 3%;font-family:Quicksand;">ORDER'S EVENT MANAGEMENT</h1>
         </center>
 
-        <table id="example" class="table table-striped table-bordered" style="width: 100%; color: <?= $dark ?>">
+        <table id="example" class="table table-striped table-bordered" style=" color: <?= $dark ?>">
 
             <thead>
                 <tr>
@@ -141,13 +141,12 @@ function getOrderList() {
     // Function to dynamically create the order rows
     function createOrderRow(order) {
         var orderRow = $("<tr id='order-row-" + order.id_order + "'></tr>");
-        orderRow.append("<td>" + order.id_order + "</td>");
-        orderRow.append("<td>" + order.order_name + "</td>");
-        orderRow.append("<td>" + order.order_description + "</td>");
-        orderRow.append("<td>" + order.order_date + "</td>");
-        orderRow.append("<td>" + order.total_price + "</td>");
-        orderRow.append("<td>" + order.status + "</td>");
-
+        orderRow.append("<td> <input type='text' class='id-event' value='" +  order.id_order + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='name-event' value='" +  order.order_name + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='description-event' value='" +  order.order_description + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='date-event' value='" +  order.order_date + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='price-event' value='" +  order.total_price + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='status-event' value='" +  order.status + "' disabled></td>");
 
         orderRow.append('<td><center><button type="button" class="btn btn-info" style=" background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>;font-weight:500;">EDIT</button><button type="button" class="btn btn-danger" style="background-color: <?= $p1 ?>; border-color: <?= $light ?>; color: <?= $light ?>; font-weight:500;">DELETE</button></center></td>');
 

@@ -1,7 +1,22 @@
 <?php
 include 'css/colpal.php';
 
+session_start();
+
+if (isset($_GET['id_user'])) {
+    $id_user = $_GET['id_user'];
+
+    // Use the $id_user value as needed
+
+    // Store it in the session if required
+    $_SESSION['id_user'] = $id_user;
+    echo($_SESSION['id_user']);
+
+} else {
+    // Handle the case when id_user is not provided
+}
 ?>
+
 
 <style>
     #example_wrapper {
@@ -156,11 +171,6 @@ include 'css/colpal.php';
 
         staffRow.append('<td><center><button type="button" class="btn btn-info edit-order" onclick="editOrder(' + staff.id + ')">EDIT</button><button type="button" class="btn btn-success save-order" style="display:none" onclick="saveOrder(' + staff.id + ')">SAVE</button><button type="button" class="btn btn-danger" onclick="deleteStaff(' + staff.id + ')">DELETE</button></center></td>');
 
-        // var actionsCell = $("<td></td>");
-        // actionsCell.append("<button class='edit-staff' onclick='editOrder(" + staff.idOrder + ")'>Edit</button>");
-        // actionsCell.append("<button class='save-staff' onclick='saveOrder(" + staff.idOrder + ")' style='display:none'>Save</button>");
-        // actionsCell.append("<button class='delete-staff' onclick='deleteOrder(" + staff.idOrder + ")'>Delete</button>");
-        // staffRow.append(actionsCell);
 
         return staffRow;
     }
@@ -194,12 +204,6 @@ include 'css/colpal.php';
 
         // Retrieve the updated order data
         var updatedOrderData = {
-            // idClient: orderRow.find(".id-client").val(),
-            // namaOrder: orderRow.find(".nama-order").val(),
-            // deskripsiOrder: orderRow.find(".deskripsi-order").val(),
-            // tanggalOrder: formatDate(orderRow.find(".tanggal-order").val()),
-            // totalHargaOrder: orderRow.find(".total-harga-order").val(),
-            // statusOrder: orderRow.find(".status-order").val()
             "email": orderRow.find(".email-staff").val(),
             "nama": orderRow.find(".nama-staff").val(),
             "password": orderRow.find(".password-staff").val()
@@ -241,23 +245,3 @@ include 'css/colpal.php';
         }
     }
 </script>
-
-<!-- <tr>
-    <td style="color:<?= $dark ?>">
-        id
-    </td>
-    <td style="color:<?= $dark ?>">
-        email
-    </td>
-    <td style="color:<?= $dark ?>">
-        nama
-    </td>
-    <td style="color:<?= $dark ?>">
-        password
-    </td>
-    <td style="color:<?= $dark ?>">
-        <center>
-            <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">EDIT</button>
-        </center>
-    </td>
-</tr> -->

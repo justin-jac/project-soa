@@ -112,14 +112,39 @@
             async: false,
             data: JSON.stringify(orderData),
             contentType: "application/json",
-            // success: function(response) {
-            //     // Handle success response
-            //     alert("Order created successfully!");
-            // },
-            // error: function(xhr, status, error) {
-            //     // Handle error response
-            //     alert("Failed to create order: " + error);
-            // }
+            success: function(response) {
+                    // Handle success response
+                    console.log("Staff created successfully!");
+                    console.log(response);
+
+                    // Send data to the login service
+                    var loginData = {
+                        "username": $("#email_input").val(),
+                        "password": $("#password_input").val()
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:5520/organizer/login",
+                        async: false,
+                        data: JSON.stringify(loginData),
+                        contentType: "application/json",
+                        success: function(response) {
+                            // Handle success response
+                            console.log("User signed up and logged in successfully!");
+                            console.log(response);
+
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle error response
+                            console.log("Failed to log in user: " + error);
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle error response
+                    console.log("Failed to create staff: " + error);
+                }
         });
     }
 </script>
