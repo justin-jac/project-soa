@@ -58,21 +58,21 @@ def event():
 
             new_id_event = dbc.lastrowid
             
-            # dataEx_mq = {}
-            # dataEx_mq['event'] = "event.new"
-            # dataEx_mq['id_event'] = new_id_event
-            # dataEx_mq['id_order'] = id_order
-            # dataEx_mq['id_staffPIC'] = id_staff
-            # dataEx_mq['event_name'] = event_name
-            # dataEx_mq['event_description'] = event_description
-            # dataEx_mq['start_time'] = start_time
-            # dataEx_mq['end_time'] = end_time
-            # dataEx_mq['sub_total'] = sub_total
-            # msgEx_mq = json.dumps(data_event)
+            dataEx_mq = {}
+            dataEx_mq['event'] = "event.new"
+            dataEx_mq['id_event'] = new_id_event
+            dataEx_mq['id_order'] = id_order
+            dataEx_mq['id_staffPIC'] = id_staff
+            dataEx_mq['event_name'] = event_name
+            dataEx_mq['event_description'] = event_description
+            dataEx_mq['start_time'] = start_time
+            dataEx_mq['end_time'] = end_time
+            dataEx_mq['sub_total'] = sub_total
+            msgEx_mq = json.dumps(dataEx_mq)
             
-            # publish_message(msgEx_mq, "event.new")
+            publish_message(msgEx_mq, "event.new")
             
-            # replyEx_mq = json.dumps(dataEx_mq)
+            replyEx_mq = json.dumps(dataEx_mq)
             status_code = 201
         except mysql.connector.Error as err:
             status_code = 409
@@ -89,7 +89,7 @@ def event():
 
 @app.route('/organizer/event/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def event2(id):
-    replyEx_mq = ''
+    msgEx_mq = ''
     status_code = 405
 
     # ------------------------------------------------------
@@ -102,7 +102,7 @@ def event2(id):
             data_event = dbc.fetchone()
 
             if data_event != None:
-                replyEx_mq = json.dumps(data_event, default=str)
+                msgEx_mq = json.dumps(data_event, default=str)
                 status_code = 200  # The request has succeeded
             else:
                 status_code = 404  # No resources found
@@ -113,7 +113,7 @@ def event2(id):
         data = json.loads(HTTPRequest.data)
 
         id_order = data['id_order']
-        id_staff = data['id_staff']
+        id_staff = data['id_staffPIC']
         event_name = data['event_name']
         event_description = data['event_description']
         start_time = data['start_time']
@@ -129,22 +129,21 @@ def event2(id):
             dbc.execute(sql, [id_order, id_staff, event_name, event_description, start_time, end_time, sub_total,id])
             db.commit()
             
-            # dataEx_mq = {}
-            # dataEx_mq['event'] = "event.update"
-            # dataEx_mq['id_event'] = id
-            # dataEx_mq['id_order'] = id_order
-            # dataEx_mq['id_staffPIC'] = id_staff
-            # dataEx_mq['event_name'] = event_name
-            # dataEx_mq['event_description'] = event_description
-            # dataEx_mq['event_date'] = event_date
-            # dataEx_mq['start_time'] = start_time
-            # dataEx_mq['end_time'] = end_time
-            # dataEx_mq['sub_total'] = sub_total
-            # msgEx_mq = json.dumps(data_event)
+            dataEx_mq = {}
+            dataEx_mq['event'] = "event.update"
+            dataEx_mq['id_event'] = id
+            dataEx_mq['id_order'] = id_order
+            dataEx_mq['id_staffPIC'] = id_staff
+            dataEx_mq['event_name'] = event_name
+            dataEx_mq['event_description'] = event_description
+            dataEx_mq['start_time'] = start_time
+            dataEx_mq['end_time'] = end_time
+            dataEx_mq['sub_total'] = sub_total
+            msgEx_mq = json.dumps(data_event)
             
-            # publish_message(msgEx_mq, "event.update")
+            publish_message(msgEx_mq, "event.update")
 
-            # msgEx_mq = json.dumps(dataEx_mq)
+            msgEx_mq = json.dumps(dataEx_mq)
 
             status_code = 200
         except mysql.connector.Error as err:
@@ -207,7 +206,7 @@ def event3(id):
     elif HTTPRequest.method == 'POST':
         data = json.loads(HTTPRequest.data)
 
-        id_staff = data['id_staff']
+        id_staff = data['id_staffPIC']
         event_name = data['event_name']
         event_description = data['event_description']
         start_time = data['start_time']
@@ -229,7 +228,7 @@ def event3(id):
             dataEx_mq['id_order'] = id
             dataEx_mq['id_event'] = new_id_event
             dataEx_mq['sub_total'] = sub_total
-            msgEx_mq = json.dumps(data_event)
+            msgEx_mq = json.dumps(dataEx_mq)
             
             publish_message(msgEx_mq, "event.new")
             
@@ -243,7 +242,7 @@ def event3(id):
         data = json.loads(HTTPRequest.data)
 
         id_event = data['id_event']
-        id_staff = data['id_staff']
+        id_staff = data['id_staffPIC']
         event_name = data['event_name']
         event_description = data['event_description']
         start_time = data['start_time']
