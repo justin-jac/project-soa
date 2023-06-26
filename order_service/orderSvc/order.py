@@ -96,7 +96,7 @@ def order2(id):
             # ambil data kantin
             sql = "SELECT * FROM orders WHERE id_order = %s"
             dbc.execute(sql, [id])
-            data_order = dbc.fetchone()
+            data_order = dbc.fetchall()
 
 
             if data_order != None:
@@ -190,7 +190,7 @@ def order3(id):
             # ambil data kantin
             sql = "SELECT * FROM orders WHERE id_client = %s"
             dbc.execute(sql, [id])
-            data_order = dbc.fetchone()
+            data_order = dbc.fetchall()
 
 
             if data_order != None:
