@@ -27,7 +27,7 @@ def main():
 
             # Update orders
             sql = "UPDATE orders set total_price=(SELECT SUM(sub_total) FROM order_events WHERE id_order=%s), status='Processing' WHERE id_order=%s"
-            dbc.execute(sql, [id_order])
+            dbc.execute(sql, [id_order, id_order])
             db.commit()
 
             message = "Succesfully adding Total Order "+str(id_order)
@@ -43,7 +43,7 @@ def main():
             
             # Update orders
             sql = "UPDATE orders set total_price=(SELECT SUM(sub_total) FROM order_events WHERE id_order=%s), status='Processing' WHERE id_order=%s"
-            dbc.execute(sql, [id_order])
+            dbc.execute(sql, [id_order, id_order])
             db.commit()
             
         elif (event == "event.delete"):
@@ -56,7 +56,7 @@ def main():
             
             # Update orders
             sql = "UPDATE orders set total_price=(SELECT SUM(sub_total) FROM order_events WHERE id_order=%s) WHERE id_order=%s"
-            dbc.execute(sql, [id_order])
+            dbc.execute(sql, [id_order, id_order])
             db.commit()
 
         elif (event == "client.new"):
