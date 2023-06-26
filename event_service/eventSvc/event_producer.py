@@ -7,9 +7,6 @@ def publish_message(message,route):
 
     # Buat exchange baru yang nantinya akan dihubungkan ke satu/lebih queue oleh consumer(s)
     channel.exchange_declare(exchange='OrganizerEX', exchange_type='topic')
-    # channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.new')
-    # channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.update')
-    # channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.delete')
 
     # Kirimkan message ke RabbitMQ
     channel.basic_publish(exchange='OrganizerEX',

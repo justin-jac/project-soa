@@ -15,85 +15,61 @@ def main():
         event = data['event']
         message = "Database Not Changed"
 
-        if event == "event.new":
-            new_id_event = data["id_event"]
+        if (event == "event.new"):
             id_order = data["id_order"]
-            sub_total = data["sub_total"]
+            id_event = data["id_event"]
+            sub_total = int(data["sub_total"])
 
-            # Add events
-            sql = "INSERT INTO orders_events (id_event, id_order, sub_total) VALUES (%s,%s,%s)"
-            dbc.execute(sql, [new_id_event, id_order, sub_total])
+            # Create new event
+            sql = "INSERT INTO `order_events` (`id_event`, `id_order`, `sub_total`) VALUES (%s,%s,%s)"
+            dbc.execute(sql, [id_event, id_order, sub_total])
             db.commit()
 
             # Update orders
-            sql = "SELECT total_price FROM orders WHERE id_order = %s"
+            sql = "UPDATE orders set total_price=(SELECT SUM(sub_total) FROM order_events WHERE id_order=%s), status='Processing' WHERE id_order=%s"
             dbc.execute(sql, [id_order])
-            prev_total = dbc.fetchone()['total_price']
-            new_total_order = prev_total + sub_total
-
-            sql = "UPDATE orders SET total_price=%s WHERE id_order=%s"
-            dbc.execute(sql, [new_total_order, id_order])
             db.commit()
 
-            message = "Succesfully adding Total Order "+str(id_order)+" & Event "+str(new_id_event)
-
-        elif event == "event.update":
+            message = "Succesfully adding Total Order "+str(id_order)
+            
+        elif (event == "event.update"):
+            id_order = data["id_order"]
+            id_event = data["id_event"]
+            sub_total = int(data["sub_total"])
+            
+            # Update existing event
+            sql = "UPDATE order_events SET sub_total = %s WHERE id_event = %s"
+            dbc.execute(sql, [sub_total, id_event])
+            
+            # Update orders
+            sql = "UPDATE orders set total_price=(SELECT SUM(sub_total) FROM order_events WHERE id_order=%s), status='Processing' WHERE id_order=%s"
+            dbc.execute(sql, [id_order])
+            db.commit()
+            
+        elif (event == "event.delete"):
             id_event = data["id_event"]
             id_order = data["id_order"]
-            new_sub_total = data["sub_total"]
-
-            # Get previous sub_total
-            sql = "SELECT sub_total FROM order_events WHERE id_event=%s"
+            
+            # DELETE event
+            sql = "DELETE FROM order_events WHERE id_event = %s"
             dbc.execute(sql, [id_event])
-            prev_sub_total = dbc.fetchone()["sub_total"]
-
-            selisih_sub_total = new_sub_total - prev_sub_total
-
-            # Update events
-            sql = "UPDATE order_events SET sub_total=%s WHERE id_event=%s"
-            dbc.execute(sql, [new_sub_total, id_event])
-            # dbc.execute(sql, [selisih_sub_total, id_event])
-            db.commit()
-
+            
             # Update orders
-            sql = "SELECT total_price FROM orders WHERE id_order = %s"
+            sql = "UPDATE orders set total_price=(SELECT SUM(sub_total) FROM order_events WHERE id_order=%s) WHERE id_order=%s"
             dbc.execute(sql, [id_order])
-            prev_total = dbc.fetchone()['total_price']
-            new_total_order = prev_total + selisih_sub_total
-
-            sql = "UPDATE orders SET total_price=%s WHERE id_order=%s"
-            dbc.execute(sql, [new_total_order, id_order])
             db.commit()
 
-            message = "Succesfully changing Total Order "+str(id_order)+" & Event "+str(id_event)
-
-        elif event == "event.delete":
-            del_id_event = data["id_event"]
-
-            # Get id_order & sub_total
-            sql = "SELECT id_order, sub_total FROM order_events WHERE id_event=%s"
-            dbc.execute(sql, [del_id_event])
-            data_del = dbc.fetchone()
-            id_order = data_del["id_order"]
-            del_sub_total = data_del["sub_total"]
-
-            # DELETE events
-            sql = "DELETE FROM order_events WHERE id_event=%s"
-            dbc.execute(sql, [del_id_event])
+        elif (event == "client.new"):
+            id_user = data['id']
+            sql = "INSERT INTO client VALUES(%s)"
+            dbc.execute(sql,[id_user])
             db.commit()
-
-            # Update orders
-            sql = "SELECT total_price FROM orders WHERE id_order = %s"
-            dbc.execute(sql, [id_order])
-            prev_total = dbc.fetchone()['total_price']
-            new_total_order = prev_total - del_sub_total
-
-            sql = "UPDATE orders SET total_price=%s WHERE id_order=%s"
-            dbc.execute(sql, [new_total_order, id_order])
+            message = "Sukses Menambah Data " + id_user
+        elif (event == "client.delete"):
+            sql = "DELETE FROM client WHERE id = %s AND user_status = %s"
+            dbc.execute(sql, [id_user] )
             db.commit()
-
-            message = "Succesfully Reducing Total Order "+str(id_order)+" & Deleting Event "+str(del_id_event)
-
+            message = "Sukses Menghapus Data " + id_user
         logging.warning("Received: %r" % message)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -105,9 +81,8 @@ def main():
     channel.exchange_declare(exchange='OrganizerEX', exchange_type='topic')
     new_queue = channel.queue_declare(queue='', exclusive=True)
     new_queue_name = new_queue.method.queue
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='order.new')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='order.update')
-    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='order.delete')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='event.*')
+    channel.queue_bind(exchange='OrganizerEX', queue=new_queue_name, routing_key='staff.*')
 
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=new_queue_name, on_message_callback=get_message)

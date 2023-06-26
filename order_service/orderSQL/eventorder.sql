@@ -49,7 +49,18 @@ INSERT INTO `orders` (`id_order`, `id_client`, `order_date`, `order_name`, `orde
 (3, 3, '2023-06-12', 'Order 3', 'Description for Order 3', 150, 'Processing');
 
 -- --------------------------------------------------------
+CREATE TABLE `client` (
+  `id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `client` VALUES
+(1),
+(2),
+(3);
 --
 -- Table structure for table `order_events`
 --
