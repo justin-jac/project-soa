@@ -64,7 +64,7 @@ def main():
             sql = "INSERT INTO client VALUES(%s)"
             dbc.execute(sql,[id_user])
             db.commit()
-            message = "Sukses Menambah Data " + id_user
+            message = "Sukses Menambah Data " + str(id_user)
         elif (event == "client.delete"):
             sql = "DELETE FROM client WHERE id = %s AND user_status = %s"
             dbc.execute(sql, [id_user] )
