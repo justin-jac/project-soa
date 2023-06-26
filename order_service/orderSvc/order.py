@@ -7,6 +7,11 @@ from order_producer import *
 db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
 dbc = db.cursor(dictionary=True)
 
+def connect():
+    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
+    dbc = db.cursor(dictionary=True)
+    return db, dbc
+
 app = Flask(__name__)
 CORS(app)
 
@@ -81,8 +86,7 @@ def order():
 
 @app.route('/organizer/order/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def order2(id):
-    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
-    dbc = db.cursor(dictionary=True)
+    db , dbc = connect()
     replyEx_mq = ''
     status_code = 405
 
@@ -176,8 +180,7 @@ def order2(id):
 
 @app.route('/organizer/order/user/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def order3(id):
-    db = mysql.connector.connect(host="OrderSQL", user="root", password="root", database="eventorder")
-    dbc = db.cursor(dictionary=True)
+    db , dbc = connect()
     replyEx_mq = ''
     status_code = 405
 
@@ -211,7 +214,7 @@ def order3(id):
         try:
             # tambah data ke order
             sql = "INSERT INTO orders (id_client, order_name,order_description, order_date, total_price, status) " \
-                  "VALUES (%s,%s,%s,%s,0,Pending)"
+                  "VALUES (%s,%s,%s,%s,0,'Pending')"
             dbc.execute(sql, [id,order_name, order_description, order_date])
             db.commit()
 
