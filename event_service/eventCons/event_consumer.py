@@ -47,7 +47,7 @@ def main():
             dbc.execute(sql, [id_staff])
             db.commit()
             
-            message = 'Added staff' + str(id_order) + ' to event DB'
+            message = 'Added staff' + str(id_staff) + ' to event DB'
             
         if event == "staff.delete":
             id_staff = data["id"]
