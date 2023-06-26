@@ -182,7 +182,7 @@ def event2(id):
 
 @app.route('/organizer/event/order/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
 def event3(id):
-    replyEx_mq = ''
+    msgEx_mq = ''
     status_code = 405
 
     # ------------------------------------------------------
@@ -195,7 +195,7 @@ def event3(id):
             data_event = dbc.fetchall()
 
             if data_event != None:
-                replyEx_mq = json.dumps(data_event, default=str)
+                msgEx_mq = json.dumps(data_event, default=str)
                 status_code = 200  # The request has succeeded
             else:
                 status_code = 404  # No resources found
@@ -288,7 +288,7 @@ def event3(id):
             dataEx_mq['event'] = "event.delete"
             dataEx_mq['id_event'] = id_event
             dataEx_mq['id_order'] = id
-            dataEx_mq = json.dumps(dataEx_mq)
+            msgEx_mq = json.dumps(dataEx_mq)
             
             publish_message(msgEx_mq, "event.delete")
 
