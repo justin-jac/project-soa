@@ -10,7 +10,7 @@ if (isset($_GET['id_user'])) {
 
     // Store it in the session if required
     $_SESSION['id_user'] = $id_user;
-    echo($_SESSION['id_user']);
+    echo ($_SESSION['id_user']);
 } else {
     // Handle the case when id_user is not provided
 }
@@ -99,10 +99,10 @@ if (isset($_GET['id_user'])) {
                 <input type="date" name="party" min="2000-01-01" id="date_input">
             </div>
 
-            <div class="form-floating mb-3">
+            <!-- <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="price_input" placeholder="Nama">
                 <label for="floatingInput">Price</label>
-            </div>
+            </div> -->
 
         </div>
 
@@ -129,27 +129,13 @@ if (isset($_GET['id_user'])) {
                     <th>Description Order</th>
                     <th>Order Date</th>
                     <th>Order Price</th>
+                    <th>Status</th>
+                    <th></th>
                 </tr>
             </thead>
 
             <tbody id="orderList">
-                <tr>
-                    <td style="color:<?= $dark ?>">
-                        id
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        email
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        nama
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        password
-                    </td>
-                    <td style="color:<?= $dark ?>">
 
-                    </td>
-                </tr>
             </tbody>
 
         </table>
@@ -164,9 +150,9 @@ if (isset($_GET['id_user'])) {
     function getOrderList() {
         $.ajax({
             type: "GET",
-            url: "http://localhost:5530/organizer/order",
+            url: "http://localhost:5530/organizer/order/user/<?= $_SESSION['id_user'] ?>",
             success: function(response) {
-                var client_id_temp = <?=$_SESSION['id_user']?>
+                // var client_id_temp = <?= $_SESSION['id_user'] ?>
 
                 // Handle success response
 
@@ -176,10 +162,10 @@ if (isset($_GET['id_user'])) {
 
                 for (var i = 0; i < orders.length; i++) {
                     var order = orders[i];
-                    if (order.id_client == client_id_temp) {
-                        var orderRow = createOrderRow(order);
-                        orderList.append(orderRow);
-                    }
+                    // if (order.id_client == client_id_temp) {
+                    var orderRow = createOrderRow(order);
+                    orderList.append(orderRow);
+                    // }
                 }
 
             },
@@ -199,47 +185,38 @@ if (isset($_GET['id_user'])) {
     function createOrderRow(order) {
         var orderRow = $("<tr id='order-row-" + order.id_order + "'></tr>");
         orderRow.append("<td>" + order.id_order + "</td>");
-        orderRow.append("<td><input type='text' class='nama-order' value='" + order.order_name + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='desc-order' value='" + order.order_description + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='date-order' value='" + order.order_date + "' disabled></td>");
-        orderRow.append("<td><input type='text' class='price-order' value='" + order.total_price + "' disabled></td>");
+        orderRow.append("<td>" + order.order_name + "</td>");
+        orderRow.append("<td>" + order.order_description + "</td>");
+        orderRow.append("<td>" + order.order_date + "</td>");
+        orderRow.append("<td>" + order.total_price + "</td>");
+        orderRow.append("<td>" + order.status + "</td>");
+
 
         orderRow.append('<td><center><button type="button" class="btn btn-info edit-order" onclick="viewDetails(' + order.id_order + ')">VIEW DETAILS</button></center></td>');
 
         return orderRow;
     }
 
-    function viewDetails(id) {
-        window.location = 'order_details.php';
-
-        $.ajax({
-            type: "GET",
-            url: "http://localhost:5530/organizer/order",
-            async: false,
-            data: JSON.stringify(orderData),
-            contentType: "application/json",
-            
-        });
-
-
+    function viewDetails(id_order) {
+        window.location = 'order_details_client.php?id_order=' + id_order;
     }
 
     // Function to send a POST request to create a new order
     function createOrder() {
         var orderData = {
-            "id_client": <?=$_SESSION['id_user']?>,
-            "order_name": $("#nama_input").val(),
-            "order_description": $("#description_input").val(),
+            "id_client": <?= $_SESSION['id_user'] ?>,
             "order_date": $("#date_input").val(),
-            "total_price": $("#price_input").val(),
-            "status": "Pending"
+            "order_name": $("#nama_input").val(),
+            "order_description": $("#description_input").val()
+            // "total_price": $("#price_input").val(),
+            // "status": "Pending"
         };
 
         alert(JSON.stringify(orderData))
 
         $.ajax({
             type: "POST",
-            url: "http://localhost:5530/organizer/order",
+            url: "http://localhost:5530/organizer/order/user/<?= $_SESSION['id_user'] ?>",
             async: false,
             data: JSON.stringify(orderData),
             contentType: "application/json",

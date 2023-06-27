@@ -1,5 +1,14 @@
 <?php
 include 'css/colpal.php';
+if (isset($_GET['id_order'])) {
+    $id_order = $_GET['id_order'];
+
+    // Store it in the session if required
+    // $_SESSION['id_user']
+    // echo ($_SESSION['id_user']);
+} else {
+    // Handle the case when id_user is not provided
+}
 
 ?>
 
@@ -82,20 +91,14 @@ include 'css/colpal.php';
             </thead>
 
             <tbody id="orderList">
-                
+
             </tbody>
 
         </table>
         <div style="width:50px"></div>
         <center style="margin: 25px;">
-            <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight: 500;" onclick="redirectToAnotherFile()">ADD EVENT</button>
-
-            <script>
-                function redirectToAnotherFile() {
-                    // Perform the redirection
-                    window.location.href = 'event_add.php';
-                }
-            </script>
+            <a href="order_details.php?id_order=" <?= $id_order ?>></a>
+            <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight: 500;">ADD EVENT</button>
         </center>
     </div>
 </body>
@@ -108,7 +111,7 @@ include 'css/colpal.php';
         getOrderList();
     });
 
-function getOrderList() {
+    function getOrderList() {
         $.ajax({
             type: "GET",
             url: "http://localhost:5530/organizer/order",
@@ -125,8 +128,8 @@ function getOrderList() {
                     var order = orders[i];
 
                     if (order.id_order === order_id) {
-                    var orderRow = createOrderRow(order);
-                    orderList.append(orderRow);
+                        var orderRow = createOrderRow(order);
+                        orderList.append(orderRow);
                     }
                 }
 
@@ -141,17 +144,15 @@ function getOrderList() {
     // Function to dynamically create the order rows
     function createOrderRow(order) {
         var orderRow = $("<tr id='order-row-" + order.id_order + "'></tr>");
-        orderRow.append("<td> <input type='text' class='id-event' value='" +  order.id_order + "' disabled></td>");
-        orderRow.append("<td> <input type='text' class='name-event' value='" +  order.order_name + "' disabled></td>");
-        orderRow.append("<td> <input type='text' class='description-event' value='" +  order.order_description + "' disabled></td>");
-        orderRow.append("<td> <input type='text' class='date-event' value='" +  order.order_date + "' disabled></td>");
-        orderRow.append("<td> <input type='text' class='price-event' value='" +  order.total_price + "' disabled></td>");
-        orderRow.append("<td> <input type='text' class='status-event' value='" +  order.status + "' disabled></td>");
+        orderRow.append("<td> <input style='width:50px' type='text' class='id-event' value='" + order.id_order + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='name-event' value='" + order.order_name + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='description-event' value='" + order.order_description + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='date-event' value='" + order.order_date + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='price-event' value='" + order.total_price + "' disabled></td>");
+        orderRow.append("<td> <input type='text' class='status-event' value='" + order.status + "' disabled></td>");
 
         orderRow.append('<td><center><button type="button" class="btn btn-info" style=" background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>;font-weight:500;">EDIT</button><button type="button" class="btn btn-danger" style="background-color: <?= $p1 ?>; border-color: <?= $light ?>; color: <?= $light ?>; font-weight:500;">DELETE</button></center></td>');
 
         return orderRow;
     }
-
-
 </script>

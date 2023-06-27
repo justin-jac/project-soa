@@ -1,15 +1,20 @@
 from flask import Flask, render_template, Response as HTTPResponse, request as HTTPRequest
-import mysql.connector, json, pika, logging
+import mysql.connector
+import json
+import pika
+import logging
 from event_producer import *
 from flask_cors import CORS
 
-db = mysql.connector.connect(host="EventSQL", user="root", password="root",database="event")
+db = mysql.connector.connect(
+    host="EventSQL", user="root", password="root", database="event")
 dbc = db.cursor(dictionary=True)
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/organizer/event', methods = ['POST', 'GET'])
+
+@app.route('/organizer/event', methods=['POST', 'GET'])
 def event():
     replyEx_mq = ''
     status_code = 405
@@ -32,7 +37,6 @@ def event():
         else:
             status_code = 404  # No resources found
 
-
     # ------------------------------------------------------
     # HTTP method = POST
     # ------------------------------------------------------
@@ -53,11 +57,12 @@ def event():
                 "end_time, sub_total)  VALUES  (%s,%s,%s,%s,%s,%s,%s)"
 
             # sql = "INSERT INTO events (nama,gedung) VALUES (%s,%s)"
-            dbc.execute(sql, [id_order, id_staff, event_name, event_description, start_time, end_time, sub_total])
+            dbc.execute(sql, [id_order, id_staff, event_name,
+                        event_description, start_time, end_time, sub_total])
             db.commit()
 
             new_id_event = dbc.lastrowid
-            
+
             dataEx_mq = {}
             dataEx_mq['event'] = "event.new"
             dataEx_mq['id_event'] = new_id_event
@@ -69,9 +74,9 @@ def event():
             dataEx_mq['end_time'] = end_time
             dataEx_mq['sub_total'] = sub_total
             msgEx_mq = json.dumps(dataEx_mq)
-            
+
             publish_message(msgEx_mq, "event.new")
-            
+
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 201
         except mysql.connector.Error as err:
@@ -81,13 +86,14 @@ def event():
     # Kirimkan JSON yang sudah dibuat ke client
     # ------------------------------------------------------
     resp = HTTPResponse()
-    if replyEx_mq !='': resp.response = replyEx_mq
+    if replyEx_mq != '':
+        resp.response = replyEx_mq
     resp.headers['Content-Type'] = 'application/json'
     resp.status = status_code
     return resp
 
 
-@app.route('/organizer/event/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+@app.route('/organizer/event/<path:id>', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def event2(id):
     msgEx_mq = ''
     status_code = 405
@@ -106,7 +112,8 @@ def event2(id):
                 status_code = 200  # The request has succeeded
             else:
                 status_code = 404  # No resources found
-        else: status_code = 400  # Bad Request
+        else:
+            status_code = 400  # Bad Request
 
     # HTTP method = PUT
     elif HTTPRequest.method == 'PUT':
@@ -126,9 +133,10 @@ def event2(id):
         try:
             sql = "UPDATE events SET id_order=%s, id_staffPIC=%s, event_name=%s, event_description=%s, " \
                   "start_time=%s, end_time=%s, sub_total=%s WHERE id_event=%s"
-            dbc.execute(sql, [id_order, id_staff, event_name, event_description, start_time, end_time, sub_total,id])
+            dbc.execute(sql, [id_order, id_staff, event_name,
+                        event_description, start_time, end_time, sub_total, id])
             db.commit()
-            
+
             dataEx_mq = {}
             dataEx_mq['event'] = "event.update"
             dataEx_mq['id_event'] = id
@@ -140,7 +148,7 @@ def event2(id):
             dataEx_mq['end_time'] = end_time
             dataEx_mq['sub_total'] = sub_total
             msgEx_mq = json.dumps(data_event)
-            
+
             publish_message(msgEx_mq, "event.update")
 
             msgEx_mq = json.dumps(dataEx_mq)
@@ -160,26 +168,28 @@ def event2(id):
             # dataEx_mq['event']  = "event_delete"
             # dataEx_mq['id']     = id
             # dataEx_mq = json.dumps(dataEx_mq)
-            
+
             # publish_message(msgEx_mq, "event.update")
 
             msgEx_mq = json.dumps(dataEx_mq)
-            
+
             status_code = 200  # The request has succeeded
 
-        else: status_code = 400  # Bad Request
-
+        else:
+            status_code = 400  # Bad Request
 
     # ------------------------------------------------------
     # Kirimkan JSON yang sudah dibuat ke client
     # ------------------------------------------------------
     resp = HTTPResponse()
-    if msgEx_mq !='': resp.response = msgEx_mq
+    if msgEx_mq != '':
+        resp.response = msgEx_mq
     resp.headers['Content-Type'] = 'application/json'
     resp.status = status_code
     return resp
 
-@app.route('/organizer/event/order/<path:id>', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+
+@app.route('/organizer/event/order/<path:id>', methods=['POST', 'GET', 'PUT', 'DELETE'])
 def event3(id):
     msgEx_mq = ''
     status_code = 405
@@ -198,7 +208,8 @@ def event3(id):
                 status_code = 200  # The request has succeeded
             else:
                 status_code = 404  # No resources found
-        else: status_code = 400  # Bad Request
+        else:
+            status_code = 400  # Bad Request
 
     # ------------------------------------------------------
     # HTTP method = POST
@@ -218,20 +229,21 @@ def event3(id):
             sql = "INSERT INTO events (id_order, id_staffPIC, event_name, event_description, start_time, "\
                 "end_time, sub_total)  VALUES  (%s,%s,%s,%s,%s,%s,%s)"
 
-            dbc.execute(sql, [id, id_staff, event_name, event_description, start_time, end_time, sub_total])
+            dbc.execute(sql, [id, id_staff, event_name,
+                        event_description, start_time, end_time, sub_total])
             db.commit()
 
             new_id_event = dbc.lastrowid
-            
+
             dataEx_mq = {}
             dataEx_mq['event'] = "event.new"
             dataEx_mq['id_order'] = id
             dataEx_mq['id_event'] = new_id_event
             dataEx_mq['sub_total'] = sub_total
             msgEx_mq = json.dumps(dataEx_mq)
-            
+
             publish_message(msgEx_mq, "event.new")
-            
+
             replyEx_mq = json.dumps(dataEx_mq)
             status_code = 201
         except mysql.connector.Error as err:
@@ -255,19 +267,18 @@ def event3(id):
         try:
             sql = "UPDATE events SET id_order=%s, id_staffPIC=%s, event_name=%s, event_description=%s, " \
                   "start_time=%s, end_time=%s, sub_total=%s WHERE id_event=%s"
-            dbc.execute(sql, [id, id_staff, event_name, event_description, start_time, end_time, sub_total,id_event])
+            dbc.execute(sql, [id, id_staff, event_name, event_description,
+                        start_time, end_time, sub_total, id_event])
             db.commit()
-            
+
             dataEx_mq = {}
             dataEx_mq['event'] = "event.update"
             dataEx_mq['id_order'] = id
             dataEx_mq['id_event'] = id_event
             dataEx_mq['sub_total'] = sub_total
-            msgEx_mq = json.dumps(data_event)
-            
-            publish_message(msgEx_mq, "event.update")
-
             msgEx_mq = json.dumps(dataEx_mq)
+
+            publish_message(msgEx_mq, "event.update")
 
             status_code = 200
         except mysql.connector.Error as err:
@@ -288,21 +299,22 @@ def event3(id):
             dataEx_mq['id_event'] = id_event
             dataEx_mq['id_order'] = id
             msgEx_mq = json.dumps(dataEx_mq)
-            
+
             publish_message(msgEx_mq, "event.delete")
 
             msgEx_mq = json.dumps(dataEx_mq)
-            
+
             status_code = 200  # The request has succeeded
 
-        else: status_code = 400  # Bad Request
-
+        else:
+            status_code = 400  # Bad Request
 
     # ------------------------------------------------------
     # Kirimkan JSON yang sudah dibuat ke client
     # ------------------------------------------------------
     resp = HTTPResponse()
-    if msgEx_mq !='': resp.response = msgEx_mq
+    if msgEx_mq != '':
+        resp.response = msgEx_mq
     resp.headers['Content-Type'] = 'application/json'
     resp.status = status_code
     return resp

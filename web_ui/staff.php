@@ -10,8 +10,7 @@ if (isset($_GET['id_user'])) {
 
     // Store it in the session if required
     $_SESSION['id_user'] = $id_user;
-    echo($_SESSION['id_user']);
-
+    echo ($_SESSION['id_user']);
 } else {
     // Handle the case when id_user is not provided
 }
@@ -122,7 +121,7 @@ if (isset($_GET['id_user'])) {
         </table>
         <center style="margin: 25px;">
             <a href="staff_add.php">
-                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD USER</button>
+                <button type="button" class="btn btn-success" style="background-color: <?= $p2 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>">ADD STAFF</button>
             </a>
         </center>
     </div>
@@ -215,14 +214,14 @@ if (isset($_GET['id_user'])) {
             url: "http://localhost:5510/organizer/staf/" + orderId,
             data: JSON.stringify(updatedOrderData),
             contentType: "application/json",
-            success: function(response) {
-                // Handle success response
-                alert("Order updated successfully!");
-            },
-            error: function(xhr, status, error) {
-                // Handle error response
-                alert("Failed to update order: " + error);
-            }
+            // success: function(response) {
+            //     // Handle success response
+            //     alert("Order updated successfully!");
+            // },
+            // error: function(xhr, status, error) {
+            //     // Handle error response
+            //     alert("Failed to update order: " + error);
+            // }
         });
     }
 

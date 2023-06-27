@@ -1,6 +1,19 @@
 <?php
 include 'css/colpal.php';
 
+session_start();
+
+if (isset($_GET['id_order'])) {
+    $id_order = $_GET['id_order'];
+
+    // Store it in the session if required
+    // $_SESSION['id_user']
+    // echo ($_SESSION['id_user']);
+} else {
+    // Handle the case when id_user is not provided
+}
+
+
 ?>
 
 <style>
@@ -19,7 +32,7 @@ include 'css/colpal.php';
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CLIENT'S ORDER LIST</title>
+    <title>ORDER DETAIL LIST</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
@@ -64,7 +77,7 @@ include 'css/colpal.php';
 <body style="background-color:<?= $light ?>; font-family:Quicksand; color:<?= $dark ?>">
     <div class="container">
         <center>
-            <h1 style="margin: 3%;font-family:Quicksand;">ORDER LIST</h1>
+            <h1 style="margin: 3%;font-family:Quicksand;">ORDER DETAILS</h1>
         </center>
 
         <table id="example" class="table table-striped table-bordered" style="width: 100%; color: <?= $dark ?>">
@@ -72,90 +85,72 @@ include 'css/colpal.php';
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Nama Order</th>
+                    <th>Event Name</th>
                     <th>Description</th>
-                    <th>Date</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th>Sub Total Price</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                 </tr>
             </thead>
 
-            <tbody id="orderList">
-                <!-- <tr class="odd">
-                    <td style="color:<?= $dark ?>">
-                        1
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        Ulang Tahun ke 6
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        23:00
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        Staff ABC
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        Client BCD
-                    </td>
-                    <td style="color:<?= $dark ?>">
-                        <center>
-                            <button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight:500;">ADD EVENT</button>
-                        </center>
-                    </td>
-                </tr> -->
+            <tbody id="staffList">
+
             </tbody>
 
         </table>
+
     </div>
+
 </body>
 
 </html>
+
 <script>
-    // Call the function to retrieve and display the order list when the page loads
+    // Call the function to retrieve and display the staff list when the page loads
     $(document).ready(function() {
-        getOrderList();
+        getStaffList();
     });
 
-    function getOrderList() {
+    function getStaffList() {
+
         $.ajax({
             type: "GET",
-            url: "http://localhost:5530/organizer/order",
+            url: "http://localhost:5540/organizer/event/order/<?= $id_order ?>",
             success: function(response) {
-
                 // Handle success response
 
-                var orders = response;
-                var orderList = $("#orderList");
-                orderList.empty();
+                // var order_id = 1;
 
-                for (var i = 0; i < orders.length; i++) {
-                    var order = orders[i];
-                    var orderRow = createOrderRow(order);
-                    orderList.append(orderRow);
+                var staffs = response;
+                var staffList = $("#staffList");
+                staffList.empty();
+
+                for (var i = 0; i < staffs.length; i++) {
+                    var staff = staffs[i];
+                    // if (staff.id_order === order_id) {
+                    var staffRow = createStaffRow(staff);
+                    staffList.append(staffRow);
+                    // }
                 }
 
             },
             error: function(xhr, status, error) {
                 // Handle error response
-                console.log("Failed to retrieve order list: " + error);
+                console.log("Failed to retrieve staff list: " + error);
             }
         });
     }
 
-    // Function to dynamically create the order rows
-    function createOrderRow(order) {
-        var orderRow = $("<tr id='order-row-" + order.id_order + "'></tr>");
-        orderRow.append("<td>" + order.id_order + "</td>");
-        orderRow.append("<td>" + order.order_name + "</td>");
-        orderRow.append("<td>" + order.order_description + "</td>");
-        orderRow.append("<td>" + order.order_date + "</td>");
-        orderRow.append("<td>" + order.total_price + "</td>");
-        orderRow.append("<td>" + order.status + "</td>");
+    // Function to dynamically create the staff rows
+    function createStaffRow(staff) {
+        var staffRow = $("<tr id='staff-row-" + staff.id_event + "'></tr>");
+        staffRow.append("<td>" + staff.id_event + "</td>");
+        staffRow.append("<td><input type='text' class='name-staff' value='" + staff.event_name + "' disabled></td>");
+        staffRow.append("<td><input type='text' class='description-staff' value='" + staff.event_description + "' disabled></td>");
+        staffRow.append("<td><input style='width:100px' type='text' class='sub_total-staff' value='" + staff.sub_total + "' disabled></td>");
+        staffRow.append("<td><input style='width:100px' type='text' class='start_time-staff' value='" + staff.start_time + "' disabled></td>");
+        staffRow.append("<td><input style='width:100px' type='text' class='end_time-staff' value='" + staff.end_time + "' disabled></td>");
 
-
-        orderRow.append('<td><a href="order_details.php?id_order=' + order.id_order + '"><center><button type="button" class="btn btn-info" style="margin-right:50px; background-color: <?= $p3 ?>; border-color: <?= $dark ?>; color: <?= $dark ?>; font-weight:500;">ADD EVENT</button></a></center></td>');
-
-        return orderRow;
+        return staffRow;
     }
 </script>
